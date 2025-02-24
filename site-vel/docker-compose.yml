@@ -1,0 +1,65 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: ./docker/backend/Dockerfile
+      target: base
+    env_file: .env
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./code:/var/www/html
+    depends_on:
+      bdd:
+        condition: service_healthy
+
+  identity:
+    build:
+      context: .
+      dockerfile: ./docker/identity/Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - ./docker/identity/default-realm.json:/opt/keycloak/data/import/default-realm.json
+    ports:
+      - "8080:8080"
+    command:
+      - start-dev
+      - --import-realm
+    healthcheck:
+      test: [ "CMD", "curl", "-fsS","--head", "http://localhost:8080/health/ready" ]
+      interval: 5s
+      timeout: 2s
+      retries: 60
+
+    depends_on:
+      bdd:
+        condition: service_healthy
+  bdd:
+    image: postgres:17.3-alpine3.21
+    user: postgres
+    volumes:
+      - ./docker/bdd/init:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "bdd_admin"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready", "-U", "keycloak", "-d", "keycloak" ]
+      interval: 10s
+      timeout: 5s
+      retries: 25
+
+  mailer:
+    container_name: vel-mailer
+    image: axllent/mailpit:v1.22.3
+    environment:
+      TZ: "Europe/Paris"
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+
+    ports:
+      - "8025:8025"
+

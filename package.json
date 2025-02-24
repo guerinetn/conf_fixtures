@@ -1,0 +1,24 @@
+{
+  "devDependencies": {
+    "@asciidoctor/reveal.js": "4.1.0",
+    "asciidoctor": "^2.2.6",
+    "browser-sync": "^2.23.6",
+    "del": "^3.0.0",
+    "gulp": "^4.0.2",
+    "gulp-exec": "^3.0.2",
+    "gulp-ext-replace": "^0.3.0",
+    "gulp-load-plugins": "^1.5.0",
+    "gulp-sequence": "^1.0.0",
+    "gulp-tap": "^1.0.1",
+    "map-stream": "^0.0.7",
+    "mermaid.cli": "^0.5.1",
+    "opal": "^0.6.4"
+  },
+  "scripts": {
+    "slides": "./node_modules/.bin/gulp",
+    "build": "npm run slides",
+    "start": "npm run serve",
+    "serve": "./node_modules/.bin/gulp serve"
+  }
+}
+

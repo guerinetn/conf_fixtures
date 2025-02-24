@@ -1,0 +1,231 @@
+= Fixtures et si on allait au dela de la données
+:icons: font
+:revealjs_theme: black
+:revealjs_slideNumber: true
+:revealjs_history: true
+:revealjs_pdfseparatefragments: false
+:revealjs_width: 1280
+:customcss: css/custom.css
+
+== Quand vous arrivez sur un projet
+
+Comment cela se passe-t-il ?
+
+[%notitle]
+=== l'installation
+
+On commence par ça
+[.strike%step]
+docker build
+[.strike%step]
+npm i
+[.strike%step]
+composer install
+[.highliht-red%step]
+Et après ?
+
+
+[%notitle]
+=== Pour les données
+[WARNING,step=3]
+Le fameux dump et les 1001 commandes...
+
+[TIP,step=1]
+La page blanche
+
+[IMPORTANT.fade-up,step=2]
+Le bon vieux dump de prod, sauf que non
+
+[NOTE.speaker]
+====
+
+
+====
+
+[.columns]
+== Qui suis je ?
+[.column]
+--
+* **Nicolas Guérinet**
+* Onepoint
+* Lead tech PHP
+* Architecte backend
+--
+
+[.column]
+--
+image::images/avatar.png[]
+--
+
+
+== Au commencement
+
+=== Comment générer des données
+
+[%step]
+* A la main
+* Pour les API avec Postman
+* Fixtures ou Object Mother
+
+[NOTE.speaker]
+====
+
+. Cela marche, mais c'est long
+. Ok et les dates alors ?
+. Martin Fowler
+====
+
+=== "Fixtures" ou "Object Mother" ?
+
+[quote, wikipedia]
+____
+Une fixture est un morceau de code qui permet de fixer un contexte pour exécuter des tests logiciels.
+
+Ce contexte est un invariant permettant la prédiction des résultats de test.
+____
+
+[quote, Martin Fowler]
+____
+An object mother is a kind of class used in testing to help create example objects that you use for testing.
+Pour la suite nous allons parler de fixture
+____
+
+
+[NOTE.speaker]
+====
+En fonction des languages le nom change mais le principe reste le même
+====
+
+=== Quelques exemples de fixtures
+
+[%step]
+* Initialiser une base de données ;
+* Initialiser en environnement vierge ;
+* Copier des données connues à partir de fichiers ;
+* Préparer des objets fictifs, des mocks.
+
+=== Et pour les outils
+
+* Django (Python)
+* FixtureBuilder ou FactoryBot (Ruby)
+* Laravel Factory ou DoctrineFixturesBundle (PHP)
+* FixtureFactory (Java)
+* Faker ou Factory-girl (node)
+
+[NOTE.speaker]
+====
+Object Mother
+Tous ces frameworks permettent de générer des données, souvent aléatoirement, mais surtout unitairement.
+
+La preuve si l'on demande à un chat un exemple de fixtures, à chaque fois il parle de septUp et tearDown
+
+* Django : Utilise des fixtures pour charger des données initiales dans la base de données.
+* Laravel avec Laravel Factory (PHP) - Bien que plus orienté vers les usines, il est utilisé pour générer des données de test.
+* Symfony avec DoctrineFixturesBundle (PHP) - Permet de charger des données de test dans la base de données.
+* FixtureBuilder (Ruby) - Utilisé pour créer des données de test via code
+* FixtureFactory (Java) est une bibliothèque qui permet de créer facilement des objets de test avec des données prédéfinies.
+====
+
+=== Génération de données
+
+Tous ses outils permettent de générer des données
+[%step]
+* Objets par objets
+* Avec des données aléatoires
+* Outillent la création d'objet
+
+[%step]
+Mais sont très dépendant du code.
+
+[NOTE.speaker]
+====
+Les fakers pour les données aléatoires.
+
+* java-faker
+* faker-js
+* FakerPHP
+
+====
+
+== Symfony et les fixtures
+[%step]
+* FixtureBundle pour la génération de données
+* SymfonyClock pour la gestion de l'heure
+
+[NOTE.speaker]
+====
+Pour la suite de cette présentation, je vais me concentrer sur PHP et le framework symfony.
+Préciser que le principe est transposable sur d'autre framework / langages
+====
+
+=== FixtureBundle
+
+[quote, symfony.com -DoctrineFixturesBundle]
+____
+Fixtures are used to load a "fake" set of data into a database that can then be used for testing or to help give you some interesting data while you're developing your application.
+____
+
+=== FixtureBundle
+
+[%step]
+* Permet l'ordonnancement de la création de données
+* Fournit Un registre de données
+* Permet la gestion de l'écrasement des données
+
+[NOTE.speaker]
+====
+
+* Jouer différents jeux de données
+* Permettre de stocker certaines références pour les réutiliser (un utilisateur spécial, un produit)
+* BDD
+** Ajout seul
+** Purge avec suppression partielle
+
+====
+
+=== SymfonyClock
+
+* Remplacement de la fonction now()
+* Possibilité de remplacer l'horloge :
+** `NativeClock` : date système standard
+** `MockClock` : fixe l'heure
+** `MonotonicClock` : horloge monotone
+
+
+== Et concrètement cela donne quoi ?
+[NOTE.speaker]
+====
+
+Introduire l'exemple en rappelant :
+
+* PHP
+* Fixtures
+* Date
+
+====
+
+=== Prenons une api de vente en ligne
+
+[NOTE.speaker]
+====
+On pourrait ajouter un front, mais ce qui nous intéresse sont les données pas le design
+====
+
+=== Nos Objets
+
+[%step]
+* Des utilisateurs
+* Des produits
+
+
+
+=== Création des données de base
+=== Création d'une commande
+=== Pourquoi on crée tout alors que le site le fait déjà ?
+=== Racontons donc une histoire
+== Ok c'est bien tout ca mais un dump de base ca fait la blague non ?
+=== Oui c'est vrai
+==== Et les modifications de schéma
+==== l'ajout de cas de tests ?
+==== Le changement de moteur de bdd ?
+==== Tu vérifies quoi avec un dump

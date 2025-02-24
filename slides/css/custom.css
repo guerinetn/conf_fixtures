@@ -1,0 +1,12 @@
+.reveal blockquote{
+    width: 90%;
+    background: rgba(88, 101, 149, 0.5);
+
+}
+.reveal .quoteblock{
+    font-size: 2rem;
+    .attribution {
+        text-align: right;
+        margin-right: 6rem;
+    }
+}
