@@ -2,12 +2,10 @@
 
 namespace App\Service;
 
-use App\Entity\Demandeur;
-use App\Entity\Intervenant;
 use App\Entity\Role;
 use App\Entity\User;
-use App\Exception\DemandeException;
-use App\Exception\IdpException;
+use App\Exception\IdentityException;
+use App\Exception\VelException;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -24,7 +22,6 @@ class IdentityService
 {
     private HttpClientInterface $httpClient;
     private ?string $token = null;
-    private ?string $managementToken = null;
 
     public function __construct(
         HttpClientInterface $httpClient,
@@ -44,16 +41,12 @@ class IdentityService
         private readonly string $frontendClientId,
         #[Autowire(env: 'FRONTEND_URL')]
         private readonly string $frontendUrl,
-        #[Autowire(env: 'IDP_MANAGEMENT_SECRET')]
-        private readonly string $idpManagementSecret,
-        #[Autowire(env: 'IDP_MANAGEMENT_USER')]
-        private readonly string $idpManagementUser,
     ) {
         $this->httpClient = $httpClient->withOptions(['base_uri' => $idpHost, 'no_proxy' => 'mar_idp']);
     }
 
     /**
-     * @throws IdpException
+     * @throws IdentityException
      * @throws \RuntimeException
      * @throws \JsonException
      */
@@ -88,7 +81,7 @@ class IdentityService
                 return $idpUserId;
             }
 
-            throw new IdpException($response->toArray(false)['errorMessage']);
+            throw new IdentityException($response->toArray(false)['errorMessage']);
         } catch (
             ClientExceptionInterface|
             RedirectionExceptionInterface|
@@ -113,7 +106,7 @@ class IdentityService
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
-     * @throws IdpException
+     * @throws IdentityException
      * @throws \JsonException
      * */
     private function forceSendEmail(string $idpUserId): void
@@ -128,7 +121,7 @@ class IdentityService
     }
 
     /**
-     * @throws IdpException
+     * @throws IdentityException
      * @throws ClientExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
@@ -149,7 +142,7 @@ class IdentityService
             );
             if (Response::HTTP_OK !== $response->getStatusCode()) {
                 $context = [$response->getStatusCode().' : '.$response->getContent(false)];
-                throw new IdpException(message: 'Error while fetch token', context: $context);
+                throw new IdentityException(message: 'Error while fetch token', context: $context);
             }
             $this->token = (string) json_decode($response->getContent(), flags: JSON_THROW_ON_ERROR)->access_token;
         }
@@ -158,7 +151,7 @@ class IdentityService
     }
 
     /**
-     * @throws IdpException
+     * @throws IdentityException
      * @throws ClientExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
@@ -181,7 +174,7 @@ class IdentityService
     }
 
     /**
-     * @throws IdpException
+     * @throws IdentityException
      * @throws ClientExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
@@ -206,11 +199,11 @@ class IdentityService
         if (200 === $response->getStatusCode() && null !== $decodeResponse && isset($decodeResponse['sub'])) {
             return $decodeResponse['sub'];
         }
-        throw new IdpException('Invalid token');
+        throw new IdentityException('Invalid token');
     }
 
     /**
-     * @throws IdpException
+     * @throws IdentityException
      */
     public function getRoleFromToken(string $idpToken): array
     {
@@ -224,7 +217,7 @@ class IdentityService
                 }
             }
 
-            return $marRoles ?? throw new IdpException(message: 'No role map available for this user', code: Response::HTTP_UNAUTHORIZED);
+            return $marRoles ?? throw new IdentityException(message: 'No role map available for this user', code: Response::HTTP_UNAUTHORIZED);
         }
         $this->logger->error(
             sprintf(
@@ -233,55 +226,46 @@ class IdentityService
                 var_export($decodedToken['realm_access'], true),
             ),
         );
-        throw new IdpException(message: 'No role from user', code: Response::HTTP_UNAUTHORIZED);
+        throw new IdentityException(message: 'No role from user', code: Response::HTTP_UNAUTHORIZED);
     }
 
     /**
      * @throws \App\Exception\VelException
-     * @throws IdpException
+     * @throws IdentityException
      * @throws \Doctrine\DBAL\Exception
      */
-    public function createOrUpdateIntervenantFromToken(string $idpToken, array $roles): User
+    public function createOrUpdateUserFromToken(string $idpToken, array $roles): User
     {
-        if (in_array(Role::ROLE_DEMANDEUR->name, $roles, true)) {
-            throw new IdpException('Invalid Role', Response::HTTP_FORBIDDEN);
+        if (in_array(Role::ROLE_ANONYMOUS->name, $roles, true)) {
+            throw new IdentityException('Invalid Role', Response::HTTP_FORBIDDEN);
         }
         try {
             $decodedToken = $this->decodeToken($idpToken);
             $this->entityManager->getConnection()->beginTransaction();
-            $intervenant = $this->entityManager->getRepository(Intervenant::class)
+            $user = $this->entityManager->getRepository(User::class)
                 ->loadUserByIdentifier($decodedToken['sub']);
-            if (null === $intervenant) {
-                $intervenant = new Intervenant();
-                $intervenant->setIdpId($decodedToken['sub']);
+            if (null === $user) {
+                $user = new User();
+                $user->setUuid($decodedToken['sub']);
             }
 
-            $intervenant->setRoles($roles);
-            $intervenant->setEmail($decodedToken['email']);
-            $intervenant->setFirstName($decodedToken['given_name']);
-            $intervenant->setLastName($decodedToken['family_name']);
-            $intervenant->setService($decodedToken['service'] ?? 'compte_technique');
-            if (in_array(Role::ROLE_CRHH->name, $roles, true)) {
-                $regionCrhh = $this->getRegionFromService($decodedToken['service']);
-                if (null === $regionCrhh) {
-                    $message = sprintf('Région inconnue pour le service %s', $decodedToken['service']);
-                    throw new DemandeException(context: ['CRHH Create or Update', $message], message: $message, code: Response::HTTP_BAD_REQUEST);
-                }
-                $intervenant->setPerimetreCrhh($regionCrhh);
-            }
+            $user->setRoles($roles);
+            $user->setEmail($decodedToken['email']);
+            $user->setFirstName($decodedToken['given_name']);
+            $user->setLastName($decodedToken['family_name']);
 
-            $this->entityManager->persist($intervenant);
+            $this->entityManager->persist($user);
             $this->entityManager->flush();
 
             $this->entityManager->getConnection()->commit();
-        } catch (IdpException $idpException) {
-            throw new DemandeException(context: ['Intervenant Create or Update', $idpException->getMessage()], code: Response::HTTP_FORBIDDEN, previous: $idpException);
+        } catch (IdentityException $idpException) {
+            throw new VelException(context: ['Intervenant Create or Update', $idpException->getMessage()], code: Response::HTTP_FORBIDDEN, previous: $idpException);
         } catch (\Exception $exception) {
             $this->entityManager->getConnection()->rollBack();
-            throw new DemandeException(context: ['Intervenant Create or Update', $exception->getMessage()], code: Response::HTTP_INTERNAL_SERVER_ERROR, previous: $exception);
+            throw new VelException(context: ['Intervenant Create or Update', $exception->getMessage()], code: Response::HTTP_INTERNAL_SERVER_ERROR, previous: $exception);
         }
 
-        return $intervenant;
+        return $user;
     }
 
     /**
@@ -294,7 +278,7 @@ class IdentityService
      *
      * @return array json_decoded token
      *
-     * @throws IdpException
+     * @throws IdentityException
      *
      * @see https://www.rfc-editor.org/rfc/rfc4648
      */
@@ -313,85 +297,17 @@ class IdentityService
                     ), true, 512, JSON_THROW_ON_ERROR,
                 );
             }
-            throw new IdpException(message: 'Identity Decode token - invalid Payload', code: Response::HTTP_UNAUTHORIZED);
+            throw new IdentityException(message: 'Identity Decode token - invalid Payload', code: Response::HTTP_UNAUTHORIZED);
         } catch (\JsonException $jsonException) {
-            throw new IdpException(message: 'Identity Decode token - Invalid Token', code: Response::HTTP_NOT_ACCEPTABLE, previous: $jsonException);
+            throw new IdentityException(message: 'Identity Decode token - Invalid Token', code: Response::HTTP_NOT_ACCEPTABLE, previous: $jsonException);
         }
     }
 
-    /**
-     * @throws \JsonException
-     * @throws ClientExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws ServerExceptionInterface
-     * @throws TransportExceptionInterface
-     */
-    public function createRole(array $roleToCreate): string
-    {
-        $postRoleResponse = $this->doManagementRequest('POST', '/roles', $roleToCreate);
 
-        if (!in_array($postRoleResponse->getStatusCode(), [201, 409], true)) {
-            throw new IdpException('Une erreur est survenue lors de la création d\'un nouveau rôle keycloak', 500);
-        }
 
-        return 'Pas d\'erreur lors de la création du rôle';
-    }
 
     /**
-     * @throws \JsonException
-     * @throws ClientExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws ServerExceptionInterface
-     * @throws TransportExceptionInterface
-     */
-    public function doManagementRequest(string $method, string $route, array $body = []): ResponseInterface
-    {
-        $managementToken = $this->fetchManagementAccessToken();
-
-        return $this->httpClient->request(
-            $method,
-            $this->idpBasePath.'/admin/realms/'.$this->idpRealm.$route,
-            [
-                'headers' => ['Content-Type' => 'application/json'],
-                'auth_bearer' => $managementToken,
-                'json' => $body,
-            ],
-        );
-    }
-
-    /**
-     * @throws \JsonException
-     * @throws ClientExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws ServerExceptionInterface
-     * @throws TransportExceptionInterface
-     */
-    public function fetchManagementAccessToken(): string
-    {
-        if (is_null($this->managementToken)) {
-            $response = $this->httpClient->request(
-                'POST',
-                $this->idpBasePath.'/realms/master/protocol/openid-connect/token',
-                [
-                    'auth_basic' => [$this->idpManagementUser, $this->idpManagementSecret],
-                    'headers' => ['Content-Type' => 'application/x-www-form-urlencoded'],
-                    'body' => ['grant_type' => 'client_credentials'],
-                ],
-            );
-
-            $this->managementToken = (string) json_decode(
-                $response->getContent(),
-                false,
-                512,
-                JSON_THROW_ON_ERROR,
-            )->access_token;
-        }
-
-        return $this->managementToken;
-    }
-
-    /**
-     * @throws IdpException
+     * @throws IdentityException
      * @throws \JsonException
      */
     public function deleteUser(string $idIdp): void
@@ -401,7 +317,7 @@ class IdentityService
             if (Response::HTTP_NO_CONTENT !== $response->getStatusCode()
                 && Response::HTTP_NOT_FOUND !== $response->getStatusCode()
             ) {
-                throw new IdpException($response->toArray(false)['errorMessage']);
+                throw new IdentityException($response->toArray(false)['errorMessage']);
             }
         } catch (
             ClientExceptionInterface|
@@ -427,7 +343,7 @@ class IdentityService
      * @throws ServerExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ClientExceptionInterface
-     * @throws IdpException
+     * @throws IdentityException
      * @throws \JsonException
      */
     public function updateUserInformations(Demandeur $user, string $firstname, string $lastName): void
@@ -439,12 +355,12 @@ class IdentityService
         );
         if (Response::HTTP_NO_CONTENT !== $response->getStatusCode()) {
             $context = [$response->getStatusCode().' : '.$response->getContent(false)];
-            throw new IdpException(message: 'Erreur lors de la mise à jour des informations', context: $context);
+            throw new IdentityException(message: 'Erreur lors de la mise à jour des informations', context: $context);
         }
     }
 
     /**
-     * @throws IdpException
+     * @throws IdentityException
      * @throws \JsonException
      * @throws ClientExceptionInterface
      * @throws RedirectionExceptionInterface
@@ -464,12 +380,12 @@ class IdentityService
         );
         if (Response::HTTP_NO_CONTENT !== $response->getStatusCode()) {
             $context = [$response->getStatusCode().' : '.$response->getContent(false)];
-            throw new IdpException(message: "Erreur lors de la mise à jour de l'email", context: $context);
+            throw new IdentityException(message: "Erreur lors de la mise à jour de l'email", context: $context);
         }
     }
 
     /**
-     * @throws IdpException
+     * @throws IdentityException
      * @throws ClientExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
@@ -484,7 +400,7 @@ class IdentityService
         );
         if (Response::HTTP_OK !== $response->getStatusCode()) {
             $context = [$response->getStatusCode().' : '.$response->getContent(false)];
-            throw new IdpException(message: "Erreur lors de la recherche d'existence d'email", context: $context);
+            throw new IdentityException(message: "Erreur lors de la recherche d'existence d'email", context: $context);
         }
 
         return !empty(json_decode($response->getContent(false), flags: JSON_THROW_ON_ERROR));
@@ -492,7 +408,7 @@ class IdentityService
 
     /**
      * @throws \App\Exception\DemandeException
-     * @throws IdpException
+     * @throws IdentityException
      * @throws \JsonException
      * @throws ClientExceptionInterface
      * @throws RedirectionExceptionInterface

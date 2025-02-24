@@ -2,7 +2,7 @@
 
 namespace App\Exception;
 
-class IdpException extends \Exception
+class IdentityException extends \Exception
 {
     public function __construct(
         string $message = '',

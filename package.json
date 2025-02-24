@@ -18,7 +18,9 @@
     "slides": "./node_modules/.bin/gulp",
     "build": "npm run slides",
     "start": "npm run serve",
-    "serve": "./node_modules/.bin/gulp serve"
+    "serve": "./node_modules/.bin/gulp serve",
+    "gen:doc:workflow": "cd site-vel && bash runCmd.sh php bin/console app:DumpWorkflow > workflow.mmd && docker run --rm -u `id -u`:`id -g` -v ./:/data minlag/mermaid-cli -i workflow.mmd -o test.png && mv test.png ../slides/images/workflow.png && rm workflow.mmd",
+    "gen:doc:diagram-bdd" : "cd site-vel && bash runCmd.sh php bin/console doctrine:diagram && cd code && mv database.svg ../../slides/images/database.svg"
   }
 }
 

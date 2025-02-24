@@ -1,2 +1,193 @@
 framework:
-    workflows: null
+    workflows:
+        vel_order:
+            type: state_machine
+            audit_trail: true
+            marking_store:
+                type: 'method'
+                property: 'status'
+            supports:
+                - App\Entity\Order
+            initial_marking: only_cart
+            metadata:
+                schema:
+                    direction: TD
+                styles:
+                    places:
+                        client:
+                            bg_color: '#359A58'
+                            color: white
+                            shape: hexagon
+                            stroke-width: 1px
+                            stroke-color: black
+                        merchant:
+                            bg_color: '#9A5713'
+                            color: white
+                            shape: rounded
+                            stroke-width: 1px
+                            stroke-color: black
+                        anonymous:
+                            bg_color: red
+                            color: white
+                            shape: stadium
+                            stroke-width: 1px
+                            stroke-color: black
+                        technical:
+                            bg_color: '#25729A'
+                            color: white
+                            shape: rounded
+                            stroke-width: 1px
+                            stroke-color: black
+                    transitions:
+                        client:
+                            color: '#359A58'
+                        #    width: 2px
+                        merchant:
+                            color: '#9A5713'
+                            width: 2px
+                        anonymous:
+                            color: red
+                            width: 2px
+                        technical:
+                            color: '#25729A'
+                            width: 2px
+                            link-style: dotted
+
+            places:
+                only_cart:
+                    metadata:
+                        style: anonymous
+                        shape: rhombus
+                outdated:
+                    metadata:
+                        style: anonymous
+                completed:
+                    metadata:
+                        style: client
+                payment_refused:
+                    metadata:
+                        style: client
+                payment_accepted:
+                    metadata:
+                        style: client
+                payment_pending:
+                    metadata:
+                        style: client
+                supplying_in_progress:
+                    metadata:
+                        style: technical
+                delivery_to_prepare:
+                    metadata:
+                       style: merchant
+                ready_to_ship:
+                    metadata:
+                       style: technical
+                shipped:
+                    metadata:
+                       style: technical
+                delivered:
+                    metadata:
+                        style: merchant
+                finished:
+                    metadata:
+                        style: client
+                in_litigation:
+                    metadata:
+                        style: client
+                litigation_handled:
+                    metadata:
+                        style: merchant
+
+            transitions:
+                link_order_to_user:
+                    guard: "is_granted('ROLE_CLIENT') and (subject.getUser() == null or subject.getUser() == user)"
+                    from: only_cart
+                    to: completed
+                    metadata:
+                        style: client
+                cancel_old_order:
+                    guard: "is_granted('ROLE_TECHNICAL')"
+                    from: only_cart
+                    to: outdated
+                    metadata:
+                        style: technical
+                        link-style: dotted
+                create_payment:
+                    guard: "is_granted('ROLE_CLIENT') and subject.getUser() == user"
+                    from: [completed, payment_refused]
+                    to: payment_pending
+                    metadata:
+                        style: client
+                accept_payment:
+                    guard: "is_granted('ROLE_TECHNICAL')"
+                    from: payment_pending
+                    to: payment_accepted
+                    metadata:
+                        style: technical
+                        link-style: dotted
+                refuse_payment:
+                    guard: "is_granted('ROLE_TECHNICAL')"
+                    from: payment_pending
+                    to: payment_refused
+                    metadata:
+                        style: technical
+                        link-style: dotted
+                confirm_provisioning:
+                    guard: "is_granted('ROLE_MERCHANT')"
+                    from: [payment_accepted, supplying_in_progress]
+                    to: delivery_to_prepare
+                    metadata:
+                        style: merchant
+                delay_order_supplying_in_progress:
+                    guard: "is_granted('ROLE_MERCHANT')"
+                    from: [payment_accepted]
+                    to: supplying_in_progress
+                    metadata:
+                        style: merchant
+                        link-size: longer
+
+                prepare_delivery:
+                    guard: "is_granted('ROLE_MERCHANT')"
+                    from: delivery_to_prepare
+                    to: ready_to_ship
+                    metadata:
+                        style: merchant
+                ship:
+                    guard: "is_granted('ROLE_TECHNICAL')"
+                    from: ready_to_ship
+                    to: shipped
+                    metadata:
+                        style: technical
+                        link-style: dotted
+                deliver:
+                    guard: "is_granted('ROLE_TECHNICAL')"
+                    from: shipped
+                    to: delivered
+                    metadata:
+                        style: technical
+                        link-style: dotted
+                reject_delivery:
+                    guard: "is_granted('ROLE_CLIENT') and subject.getUser() == user"
+                    from: delivered
+                    to: in_litigation
+                    metadata:
+                        style: client
+                confirm_delivery:
+                    guard: "is_granted('ROLE_CLIENT') and subject.getUser() == user"
+                    from: delivered
+                    to: finished
+                    metadata:
+                        style: client
+                        link-size: longer
+                handle_litigation:
+                    guard: "is_granted('ROLE_MERCHANT')"
+                    from: in_litigation
+                    to: litigation_handled
+                    metadata:
+                        style: merchant
+                close_litigation:
+                    guard: "is_granted('ROLE_CLIENT') and subject.getUser() == user"
+                    from: in_litigation
+                    to: finished
+                    metadata:
+                        style: client

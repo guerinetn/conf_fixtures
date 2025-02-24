@@ -46,6 +46,9 @@ class User implements UserInterface
     #[Groups(groups: [User::READ, User::CREATE])]
     private array $roles;
 
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private \DateTimeInterface $lastConnectedAt;
+
     #[ORM\OneToMany(
         mappedBy: 'user',
         targetEntity: Review::class,
@@ -56,15 +59,33 @@ class User implements UserInterface
 
     #[ORM\OneToMany(
         mappedBy: 'user',
+        targetEntity: UserAddress::class,
+        cascade: ['persist', 'remove'],
+        orphanRemoval: true
+    )]
+    private Collection $addresses;
+    #[ORM\OneToMany(
+        mappedBy: 'user',
         targetEntity: Historique::class,
         cascade: ['persist', 'remove'],
         orphanRemoval: true
     )]
     private Collection $historiques;
 
+    #[ORM\OneToMany(
+        mappedBy: 'client',
+        targetEntity: Order::class,
+        cascade: ['persist', 'remove'],
+        orphanRemoval: true
+    )]
+    private Collection $orders;
+
     public function __construct()
     {
         $this->reviews = new ArrayCollection();
+        $this->historiques = new ArrayCollection();
+        $this->orders = new ArrayCollection();
+        $this->addresses = new ArrayCollection();
     }
 
     #[Groups(groups: [User::READ])]
@@ -96,6 +117,18 @@ class User implements UserInterface
     public function setId(int $id): self
     {
         $this->id = $id;
+
+        return $this;
+    }
+
+    public function getUuid(): ?string
+    {
+        return $this->uuid;
+    }
+
+    public function setUuid(?string $uuid): User
+    {
+        $this->uuid = $uuid;
 
         return $this;
     }
@@ -181,5 +214,43 @@ class User implements UserInterface
         }
 
         return $this;
+    }
+
+    public function setLastConnectedAt(\DateTimeInterface $now): self
+    {
+        $this->lastConnectedAt = $now;
+
+        return $this;
+    }
+
+    public function getLastConnectedAt(): \DateTimeInterface
+    {
+        return $this->lastConnectedAt;
+    }
+
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(Order $order): void
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders->add($order);
+            $order->setClient($this);
+        }
+    }
+
+    public function getAddresses(): Collection
+    {
+        return $this->addresses;
+    }
+
+    public function addAddresses(Address $address): void
+    {
+        if (!$this->addresses->contains($address)) {
+            $this->addresses->add($address);
+            $address->setUser($this);
+        }
     }
 }

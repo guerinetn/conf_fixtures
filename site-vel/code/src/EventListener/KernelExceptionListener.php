@@ -2,7 +2,7 @@
 
 namespace App\EventListener;
 
-use App\Exception\IdpException;
+use App\Exception\IdentityException;
 use App\Exception\VelException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
@@ -39,7 +39,7 @@ class KernelExceptionListener implements EventSubscriberInterface, LoggerAwareIn
             );
         }
 
-        if ($exception instanceof IdpException) {
+        if ($exception instanceof IdentityException) {
             $this->log($event);
             $event->setResponse(new JsonResponse(
                 status: 0 !== $exception->getCode() ? $exception->getCode() : Response::HTTP_UNAUTHORIZED

@@ -15,14 +15,11 @@ Comment cela se passe-t-il ?
 === l'installation
 
 On commence par ça
-[.strike%step]
-docker build
-[.strike%step]
-npm i
-[.strike%step]
-composer install
-[.highliht-red%step]
-Et après ?
+[%step]
+* git clone
+* build (npm, yarn, composer)
+* docker compose up (éventuellement)
+* Et après ?
 
 
 [%notitle]
@@ -34,7 +31,7 @@ Le fameux dump et les 1001 commandes...
 La page blanche
 
 [IMPORTANT.fade-up,step=2]
-Le bon vieux dump de prod, sauf que non
+Le bon vieux dump de prod
 
 [NOTE.speaker]
 ====
@@ -63,9 +60,10 @@ image::images/avatar.png[]
 === Comment générer des données
 
 [%step]
-* A la main
+* À la main dans l'interface
+* À la main dans la base de données
 * Pour les API avec Postman
-* Fixtures ou Object Mother
+* Fixtures & Object Mother
 
 [NOTE.speaker]
 ====
@@ -93,7 +91,9 @@ ____
 
 [NOTE.speaker]
 ====
-En fonction des languages le nom change mais le principe reste le même
+* Nom différent
+* Mais principe identique
+
 ====
 
 === Quelques exemples de fixtures
@@ -148,7 +148,7 @@ Les fakers pour les données aléatoires.
 ====
 
 == Symfony et les fixtures
-[%step]
+
 * FixtureBundle pour la génération de données
 * SymfonyClock pour la gestion de l'heure
 
@@ -167,7 +167,7 @@ ____
 
 === FixtureBundle
 
-[%step]
+
 * Permet l'ordonnancement de la création de données
 * Fournit Un registre de données
 * Permet la gestion de l'écrasement des données
@@ -204,7 +204,7 @@ Introduire l'exemple en rappelant :
 
 ====
 
-=== Prenons une api de vente en ligne
+=== Prenons une api de vente de livre
 
 [NOTE.speaker]
 ====
@@ -215,12 +215,50 @@ On pourrait ajouter un front, mais ce qui nous intéresse sont les données pas 
 
 [%step]
 * Des utilisateurs
-* Des produits
+* Des livres
+* Des commandes
+* Des commentaires
+* ...
 
+[%notitle]
+=== Schéma BDD
 
+image::images/database.svg[bdd,75%]
 
 === Création des données de base
+
+[%step]
+* Les administrateurs
+* Nos livres
+* Nos Clients
+
 === Création d'une commande
+
+On va avoir besoin :
+[%step]
+* D'un client
+* D'un livre
+* d'une adresse de livraison
+* d'une adresse de facturation (optionnel)
+* d'un historique pour chaque étape
+
+=== Oui Nos commandes ont un cycle de vie
+
+[%notitle]
+=== workflow
+
+image::images/workflow.png[workflow,30%]
+
+=== Création d'une VRAI commande
+
+On va avoir besoin de :
+[%step]
+* Client;
+* Livre;
+* Adresse de livraison;
+* Adresse de facturation (optionnel);
+* Historique pour chaque étape...
+
 === Pourquoi on crée tout alors que le site le fait déjà ?
 === Racontons donc une histoire
 == Ok c'est bien tout ca mais un dump de base ca fait la blague non ?

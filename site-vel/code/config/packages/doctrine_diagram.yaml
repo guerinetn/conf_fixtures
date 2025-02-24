@@ -3,3 +3,6 @@ doctrine_diagram:
     size: midi
     filename: database
     format: svg
+    theme: amiga
+    exclude:
+        - doctrine_migration_versions

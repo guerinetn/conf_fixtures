@@ -8,15 +8,19 @@ use OpenApi\Attributes as OA;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: AdresseRepository::class)]
 #[ORM\Table(name: 'adresse')]
-#[OA\Schema]
-class Adresse
+#[ORM\Entity]
+class Address
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'SEQUENCE')]
     #[ORM\Column(type: 'integer', unique: true, nullable: false)]
+    #[Groups(groups: [User::READ])]
     private int $id;
+
+    #[ORM\ManyToOne(targetEntity: User::class,inversedBy: 'addresses')]
+    #[Groups(groups: [User::READ])]
+    private User $user;
 
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
     #[OA\Property(description: 'adresse', example: 'numéro, nom de la voie', nullable: false)]
@@ -27,10 +31,12 @@ class Adresse
         minMessage: 'adresse1 doit comporter au moins {{ limit }} caractère(s)',
         maxMessage: 'adresse1 ne doit pas excéder {{ limit }} caractères'
     )]
+    #[Groups(groups: [User::READ])]
     private string $address1;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[OA\Property(description: 'complément adresse', example: 'complément adresse', nullable: true)]
+    #[Groups(groups: [User::READ])]
     private ?string $adress2 = null;
 
     #[ORM\Column(type: 'string', length: 5, nullable: false)]
@@ -39,13 +45,10 @@ class Adresse
         pattern: '/^\d{2}[ ]?\d{3}$/',
         message: 'Le code postal doit comporter 5 chiffres.'
     )]
+    #[Groups(groups: [User::READ])]
     private string $postalCode;
 
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
-    #[Groups([
-        'demande_create_step_1', 'demande_read', 'demande_list',
-        'etablissement_detail', 'etablissement_api_export',
-    ])]
     #[OA\Property(description: 'ville', example: 'Paris', nullable: false)]
     #[Assert\NotBlank(message: 'ville doit être renseigné.')]
     #[Assert\Length(
@@ -54,6 +57,7 @@ class Adresse
         minMessage: 'ville doit comporter au moins {{ limit }} caractère(s)',
         maxMessage: 'ville ne doit pas excéder {{ limit }} caractères'
     )]
+    #[Groups(groups: [User::READ])]
     private string $city;
 
     public function getId(): int
@@ -107,5 +111,15 @@ class Adresse
         $this->city = $city;
 
         return $this;
+    }
+
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+
+    public function setUser(User $user): void
+    {
+        $this->user = $user;
     }
 }

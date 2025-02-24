@@ -4,7 +4,8 @@ namespace App\Security;
 
 use App\Entity\Role;
 use App\Entity\User;
-use App\Exception\IdpException;
+use App\Exception\IdentityException;
+use App\Exception\VelException;
 use App\Service\IdentityService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,7 +27,7 @@ use function Symfony\Component\Clock\now;
 class JwtAuthenticator extends AbstractAuthenticator
 {
     public function __construct(
-        private readonly IdentityService $idpService,
+        private readonly IdentityService $identityService,
         private readonly EntityManagerInterface $entityManager,
     ) {
     }
@@ -37,8 +38,10 @@ class JwtAuthenticator extends AbstractAuthenticator
     }
 
     /**
-     * @throws IdpException
+     * @throws IdentityException
      * @throws \Doctrine\DBAL\Exception
+     * @throws VelException
+     * @throws \JsonException
      */
     public function authenticate(Request $request): Passport
     {
@@ -48,9 +51,9 @@ class JwtAuthenticator extends AbstractAuthenticator
         }
 
         try {
-            $idpId = $this->idpService->validateToken($token);
+            $idpId = $this->identityService->validateToken($token);
         } catch (
-            IdpException|
+            IdentityException|
             ClientExceptionInterface|
             RedirectionExceptionInterface|
             ServerExceptionInterface|
@@ -58,21 +61,21 @@ class JwtAuthenticator extends AbstractAuthenticator
         ) {
             throw new AuthenticationException($e->getMessage(), previous: $e);
         }
-        $roles = $this->idpService->getRoleFromToken($token);
-        if (!in_array(Role::ROLE_DEMANDEUR->name, $roles, true)) {
-            $this->idpService->createOrUpdateIntervenantFromToken($token, $roles);
+        $roles = $this->identityService->getRoleFromToken($token);
+        if (!in_array(Role::ROLE_ANONYMOUS->name, $roles, true)) {
+            $this->identityService->createOrUpdateUserFromToken($token, $roles);
         }
 
         return new SelfValidatingPassport(new UserBadge($idpId));
     }
 
     /**
-     * @throws IdpException
+     * @throws IdentityException
      * @throws \DateMalformedStringException
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        $roles = $this->idpService->getRoleFromToken($request->headers->get('authorization', ''));
+        $roles = $this->identityService->getRoleFromToken($request->headers->get('authorization', ''));
 
         /** @var User $user */
         $user = $token->getUser();
