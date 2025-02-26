@@ -246,7 +246,7 @@ class User implements UserInterface
         return $this->addresses;
     }
 
-    public function addAddresses(Address $address): void
+    public function addAddress(Address $address): void
     {
         if (!$this->addresses->contains($address)) {
             $this->addresses->add($address);

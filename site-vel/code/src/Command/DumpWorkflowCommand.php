@@ -21,8 +21,7 @@ class DumpWorkflowCommand extends Command
 
     public function __construct(
         private readonly WorkflowInterface $velOrderStateMachine,
-    )
-    {
+    ) {
         parent::__construct();
     }
 
@@ -69,7 +68,6 @@ class DumpWorkflowCommand extends Command
         $this->validateWorkflowName($workflowName);
 
         $output->writeln($dumper->dump($this->velOrderStateMachine->getDefinition()));
-
 
         return Command::SUCCESS;
     }

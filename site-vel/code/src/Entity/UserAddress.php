@@ -8,7 +8,6 @@ use Symfony\Component\Serializer\Attribute\Groups;
 #[ORM\Entity]
 class UserAddress
 {
-
     #[ORM\Id(), ORM\Column, ORM\GeneratedValue('SEQUENCE')]
     #[Groups(groups: [User::READ])]
     private int $id;

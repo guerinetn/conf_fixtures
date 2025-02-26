@@ -16,11 +16,11 @@ class CartBooks
 
     #[ORM\ManyToOne(targetEntity: Cart::class, inversedBy: 'cartBooks')]
     #[Groups([Cart::READ, Cart::CREATE])]
-    private ?Cart $cart=null;
+    private ?Cart $cart = null;
 
     #[ORM\ManyToOne(targetEntity: Book::class)]
     #[Groups([Cart::READ, Cart::CREATE])]
-    private ?Book $book=null;
+    private ?Book $book = null;
 
     #[ORM\Column(type: 'integer')]
     #[Assert\GreaterThan(1)]

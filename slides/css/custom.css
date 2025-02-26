@@ -1,12 +1,87 @@
-.reveal blockquote{
-    width: 90%;
-    background: rgba(88, 101, 149, 0.5);
+@import url("https://fonts.googleapis.com/css2?family=Poppins");
 
+
+:root {
+    /*--r-background-color: #F1EDE3;*/
+    /*--r-main-color: #111012;*/
+    --r-main-font: 'Poppins';
 }
-.reveal .quoteblock{
-    font-size: 2rem;
-    .attribution {
-        text-align: right;
-        margin-right: 6rem;
+
+body:after {
+    content: ' ';
+    position: fixed;
+    bottom: 1em;
+    width: 100%;
+    height: 4em;
+    background-image: url(onepoint_white.png);
+    background-size: 12%;
+    background-repeat: no-repeat;
+    background-position: 95%;
+}
+
+.reveal {
+    blockquote {
+        width: 90%;
+        background: rgba(88, 101, 149, 0.5);
+
+    }
+
+    .quoteblock {
+        font-size: 2rem;
+
+        .attribution {
+            text-align: right;
+            margin-right: 6rem;
+        }
+    }
+
+    section {
+        h1 {
+        }
+
+        h2 {
+            font-size: 1.2em;
+        }
+    }
+
+    code {
+        font-size: 18px;
+        line-height: normal;
+    }
+
+    code.language-yaml {
+        font-size: smaller;
+    }
+
+    code.language-php {
+        font-size: 18px;
+        max-height: 500px;
+        line-height: normal;
+    }
+
+    #_ne_le_ferions_nous_pas_déjà_4 code.language-php {
+        max-height: 530px;
+    }
+
+    #_workflow {
+        top: -30px !important;
+    }
+
+    #_merci {
+        font-size: larger;
+    }
+
+    #_le_parcours_de_monsieur_client {
+        li {
+            font-size: smaller;
+        }
     }
 }
+
+
+.highlightjs .language-php {
+    font-size: 20px;
+}
+
+
+

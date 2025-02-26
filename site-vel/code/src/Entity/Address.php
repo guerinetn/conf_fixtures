@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Repository\AdresseRepository;
 use Doctrine\ORM\Mapping as ORM;
 use OpenApi\Attributes as OA;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -18,7 +17,7 @@ class Address
     #[Groups(groups: [User::READ])]
     private int $id;
 
-    #[ORM\ManyToOne(targetEntity: User::class,inversedBy: 'addresses')]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'addresses')]
     #[Groups(groups: [User::READ])]
     private User $user;
 
@@ -37,7 +36,7 @@ class Address
     #[ORM\Column(type: 'string', length: 255, nullable: true)]
     #[OA\Property(description: 'complément adresse', example: 'complément adresse', nullable: true)]
     #[Groups(groups: [User::READ])]
-    private ?string $adress2 = null;
+    private ?string $address2 = null;
 
     #[ORM\Column(type: 'string', length: 5, nullable: false)]
     #[OA\Property(description: 'code postal', example: '75000', nullable: false)]
@@ -46,7 +45,7 @@ class Address
         message: 'Le code postal doit comporter 5 chiffres.'
     )]
     #[Groups(groups: [User::READ])]
-    private string $postalCode;
+    private string $zipCode;
 
     #[ORM\Column(type: 'string', length: 255, nullable: false)]
     #[OA\Property(description: 'ville', example: 'Paris', nullable: false)]
@@ -77,26 +76,26 @@ class Address
         return $this;
     }
 
-    public function getAdress2(): ?string
+    public function getAddress2(): ?string
     {
-        return $this->adress2;
+        return $this->address2;
     }
 
-    public function setAdress2(?string $adress2): self
+    public function setAddress2(?string $address2): self
     {
-        $this->adress2 = $adress2;
+        $this->address2 = $address2;
 
         return $this;
     }
 
-    public function getPostalCode(): string
+    public function getZipCode(): string
     {
-        return $this->postalCode;
+        return $this->zipCode;
     }
 
-    public function setPostalCode(string $postalCode): self
+    public function setZipCode(string $zipCode): self
     {
-        $this->postalCode = $postalCode;
+        $this->zipCode = $zipCode;
 
         return $this;
     }

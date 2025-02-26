@@ -10,11 +10,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class Candidate
 {
-
     public const VIEW = 'candidate_read';
     public const CREATE = 'candidate_create';
 
-    #[Groups([Candidate::VIEW,Candidate::CREATE])]
+    #[Groups([Candidate::VIEW, Candidate::CREATE])]
     #[Assert\Valid]
     private User $user;
 
@@ -22,18 +21,16 @@ class Candidate
     #[OA\Property(description: 'Mot de passe', example: 'Password12c!', nullable: false)]
     private string $password;
 
-
     public function __construct()
     {
         $this->user = new User();
-        $this->user->setRoles([Role::ROLE_CLIENT]);
+        $this->user->setRoles([Role::ROLE_CUSTOMER]);
     }
 
     public function getUser(): User
     {
         return $this->user;
     }
-
 
     public function getPassword(): string
     {

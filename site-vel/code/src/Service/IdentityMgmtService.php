@@ -34,6 +34,7 @@ class IdentityMgmtService
     ) {
         $this->httpClient = $httpClient->withOptions(['base_uri' => $idpHost, 'no_proxy' => 'mar_idp']);
     }
+
     /**
      * @throws \JsonException
      * @throws ClientExceptionInterface
@@ -51,7 +52,6 @@ class IdentityMgmtService
 
         return 'Pas d\'erreur lors de la création du rôle';
     }
-
 
     /**
      * @throws \JsonException
@@ -74,7 +74,6 @@ class IdentityMgmtService
             ],
         );
     }
-
 
     /**
      * @throws \JsonException
@@ -106,5 +105,4 @@ class IdentityMgmtService
 
         return $this->managementToken;
     }
-
 }

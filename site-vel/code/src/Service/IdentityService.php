@@ -50,7 +50,7 @@ class IdentityService
      * @throws \RuntimeException
      * @throws \JsonException
      */
-    public function createUser(User $user): string
+    public function createUser(User $user, string $password): string
     {
         $body = [
             'firstName' => $user->getFirstName(),
@@ -63,7 +63,7 @@ class IdentityService
             'credentials' => [
                 [
                     'type' => 'password',
-                    'value' => $user->getPassword(),
+                    'value' => $password,
                     'temporary' => false,
                 ],
             ],
@@ -302,9 +302,6 @@ class IdentityService
             throw new IdentityException(message: 'Identity Decode token - Invalid Token', code: Response::HTTP_NOT_ACCEPTABLE, previous: $jsonException);
         }
     }
-
-
-
 
     /**
      * @throws IdentityException

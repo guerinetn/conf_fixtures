@@ -10,6 +10,21 @@ class Order
     public const READ = 'order:read';
     public const CREATE = 'order:create';
 
+    public const string INITIAL = 'intial';
+    public const string OUTDATED = 'outdated';
+    public const string COMPLETED = 'completed';
+    public const string PAYMENT_REFUSED = 'payment_refused';
+    public const string PAYMENT_ACCEPTED = 'payment_accepted';
+    public const string PAYMENT_PENDING = 'payment_pending';
+    public const string SUPPLYING_IN_PROGRESS = 'supplying_in_progress';
+    public const string DELIVERY_TO_PREPARE = 'delivery_to_prepare';
+    public const string READY_TO_SHIP = 'ready_to_ship';
+    public const string SHIPPED = 'shipped';
+    public const string DELIVERED = 'delivered';
+    public const string FINISHED = 'finished';
+    public const string IN_LITIGATION = 'in_litigation';
+    public const string LITIGATION_HANDLED = 'litigation_handled';
+
     #[ORM\Id(), ORM\Column, ORM\GeneratedValue('SEQUENCE')]
     private int $id;
 
@@ -19,11 +34,20 @@ class Order
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'orders')]
     private User $client;
 
+    #[ORM\OneToOne(targetEntity: Cart::class)]
     private Cart $cart;
 
+    #[ORM\OneToOne(targetEntity: Address::class)]
     private Address $deliveryAddress;
 
+    #[ORM\OneToOne(targetEntity: Address::class)]
     private Address $billingAddress;
+
+    #[ORM\Column(type: 'string', length: 255, nullable: false)]
+    private string $paymentMethod;
+
+    #[ORM\Column(type: 'datetime')]
+    private \DateTimeInterface $datePayment;
 
     public function getId(): int
     {
@@ -85,5 +109,23 @@ class Order
         $this->status = $status;
     }
 
+    public function getPaymentMethod(): string
+    {
+        return $this->paymentMethod;
+    }
 
+    public function setPaymentMethod(string $paymentMethod): void
+    {
+        $this->paymentMethod = $paymentMethod;
+    }
+
+    public function getDatePayment(): \DateTimeInterface
+    {
+        return $this->datePayment;
+    }
+
+    public function setDatePayment(\DateTimeInterface $datePayment): void
+    {
+        $this->datePayment = $datePayment;
+    }
 }

@@ -36,6 +36,11 @@ class Book
     #[Groups(groups: [Book::READ])]
     public int $stock = 0;
 
+    #[ORM\Column(type: 'float', nullable: true)]
+    #[Groups(groups: [Book::READ])]
+    #[Assert\GreaterThanOrEqual(0)]
+    public ?float $price = null;
+
     #[ORM\Column(type: 'text')]
     #[Groups(groups: [Book::READ])]
     public string $description;
@@ -152,5 +157,15 @@ class Book
         }
 
         return $this;
+    }
+
+    public function getPrice(): int
+    {
+        return $this->price;
+    }
+
+    public function setPrice(int $price): void
+    {
+        $this->price = $price;
     }
 }

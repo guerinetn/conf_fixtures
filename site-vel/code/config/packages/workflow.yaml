@@ -8,7 +8,7 @@ framework:
                 property: 'status'
             supports:
                 - App\Entity\Order
-            initial_marking: only_cart
+            initial_marking: !php/const App\Entity\Order::INITIAL
             metadata:
                 schema:
                     direction: TD
@@ -54,140 +54,140 @@ framework:
                             link-style: dotted
 
             places:
-                only_cart:
+                !php/const App\Entity\Order::INITIAL:
                     metadata:
                         style: anonymous
                         shape: rhombus
-                outdated:
+                !php/const App\Entity\Order::OUTDATED:
                     metadata:
                         style: anonymous
-                completed:
+                !php/const App\Entity\Order::COMPLETED:
                     metadata:
                         style: client
-                payment_refused:
+                !php/const App\Entity\Order::PAYMENT_REFUSED:
                     metadata:
                         style: client
-                payment_accepted:
+                !php/const App\Entity\Order::PAYMENT_ACCEPTED:
                     metadata:
                         style: client
-                payment_pending:
+                !php/const App\Entity\Order::PAYMENT_PENDING:
                     metadata:
                         style: client
-                supplying_in_progress:
+                !php/const App\Entity\Order::SUPPLYING_IN_PROGRESS:
                     metadata:
                         style: technical
-                delivery_to_prepare:
+                !php/const App\Entity\Order::DELIVERY_TO_PREPARE:
                     metadata:
                        style: merchant
-                ready_to_ship:
+                !php/const App\Entity\Order::READY_TO_SHIP:
                     metadata:
                        style: technical
-                shipped:
+                !php/const App\Entity\Order::SHIPPED:
                     metadata:
                        style: technical
-                delivered:
+                !php/const App\Entity\Order::DELIVERED:
                     metadata:
                         style: merchant
-                finished:
+                !php/const App\Entity\Order::FINISHED:
                     metadata:
                         style: client
-                in_litigation:
+                !php/const App\Entity\Order::IN_LITIGATION:
                     metadata:
                         style: client
-                litigation_handled:
+                !php/const App\Entity\Order::LITIGATION_HANDLED:
                     metadata:
                         style: merchant
 
             transitions:
                 link_order_to_user:
                     guard: "is_granted('ROLE_CLIENT') and (subject.getUser() == null or subject.getUser() == user)"
-                    from: only_cart
-                    to: completed
+                    from: !php/const App\Entity\Order::INITIAL
+                    to: !php/const App\Entity\Order::COMPLETED
                     metadata:
                         style: client
                 cancel_old_order:
                     guard: "is_granted('ROLE_TECHNICAL')"
-                    from: only_cart
-                    to: outdated
+                    from: !php/const App\Entity\Order::INITIAL
+                    to: !php/const App\Entity\Order::OUTDATED
                     metadata:
                         style: technical
                         link-style: dotted
                 create_payment:
                     guard: "is_granted('ROLE_CLIENT') and subject.getUser() == user"
-                    from: [completed, payment_refused]
+                    from: [!php/const App\Entity\Order::COMPLETED, !php/const App\Entity\Order::PAYMENT_REFUSED]
                     to: payment_pending
                     metadata:
                         style: client
                 accept_payment:
                     guard: "is_granted('ROLE_TECHNICAL')"
-                    from: payment_pending
-                    to: payment_accepted
+                    from: !php/const App\Entity\Order::PAYMENT_PENDING
+                    to: !php/const App\Entity\Order::PAYMENT_ACCEPTED
                     metadata:
                         style: technical
                         link-style: dotted
                 refuse_payment:
                     guard: "is_granted('ROLE_TECHNICAL')"
-                    from: payment_pending
-                    to: payment_refused
+                    from: !php/const App\Entity\Order::PAYMENT_PENDING
+                    to: !php/const App\Entity\Order::PAYMENT_REFUSED
                     metadata:
                         style: technical
                         link-style: dotted
                 confirm_provisioning:
                     guard: "is_granted('ROLE_MERCHANT')"
-                    from: [payment_accepted, supplying_in_progress]
-                    to: delivery_to_prepare
+                    from: [!php/const App\Entity\Order::PAYMENT_ACCEPTED, !php/const App\Entity\Order::SUPPLYING_IN_PROGRESS]
+                    to: !php/const App\Entity\Order::DELIVERY_TO_PREPARE
                     metadata:
                         style: merchant
                 delay_order_supplying_in_progress:
                     guard: "is_granted('ROLE_MERCHANT')"
-                    from: [payment_accepted]
-                    to: supplying_in_progress
+                    from: [!php/const App\Entity\Order::PAYMENT_ACCEPTED]
+                    to: !php/const App\Entity\Order::SUPPLYING_IN_PROGRESS
                     metadata:
                         style: merchant
                         link-size: longer
 
                 prepare_delivery:
                     guard: "is_granted('ROLE_MERCHANT')"
-                    from: delivery_to_prepare
-                    to: ready_to_ship
+                    from: !php/const App\Entity\Order::DELIVERY_TO_PREPARE
+                    to: !php/const App\Entity\Order::READY_TO_SHIP
                     metadata:
                         style: merchant
                 ship:
                     guard: "is_granted('ROLE_TECHNICAL')"
-                    from: ready_to_ship
-                    to: shipped
+                    from: !php/const App\Entity\Order::READY_TO_SHIP
+                    to: !php/const App\Entity\Order::SHIPPED
                     metadata:
                         style: technical
                         link-style: dotted
                 deliver:
                     guard: "is_granted('ROLE_TECHNICAL')"
-                    from: shipped
-                    to: delivered
+                    from: !php/const App\Entity\Order::SHIPPED
+                    to: !php/const App\Entity\Order::DELIVERED
                     metadata:
                         style: technical
                         link-style: dotted
                 reject_delivery:
                     guard: "is_granted('ROLE_CLIENT') and subject.getUser() == user"
-                    from: delivered
-                    to: in_litigation
+                    from: !php/const App\Entity\Order::DELIVERED
+                    to: !php/const App\Entity\Order::IN_LITIGATION
                     metadata:
                         style: client
                 confirm_delivery:
                     guard: "is_granted('ROLE_CLIENT') and subject.getUser() == user"
-                    from: delivered
-                    to: finished
+                    from: !php/const App\Entity\Order::DELIVERED
+                    to: !php/const App\Entity\Order::FINISHED
                     metadata:
                         style: client
                         link-size: longer
                 handle_litigation:
                     guard: "is_granted('ROLE_MERCHANT')"
-                    from: in_litigation
-                    to: litigation_handled
+                    from: !php/const App\Entity\Order::IN_LITIGATION
+                    to: !php/const App\Entity\Order::LITIGATION_HANDLED
                     metadata:
                         style: merchant
                 close_litigation:
                     guard: "is_granted('ROLE_CLIENT') and subject.getUser() == user"
-                    from: in_litigation
-                    to: finished
+                    from: !php/const App\Entity\Order::IN_LITIGATION
+                    to: !php/const App\Entity\Order::FINISHED
                     metadata:
                         style: client
