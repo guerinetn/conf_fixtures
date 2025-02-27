@@ -1,6 +1,6 @@
 = Fixtures et si on allait au-delà des données
 :icons: font
-:revealjs_theme: black
+:revealjs_theme: simple
 :revealjs_slideNumber: true
 :revealjs_history: true
 :revealjs_pdfseparatefragments: false
@@ -14,15 +14,30 @@
 Comment cela se passe-t-il ?
 
 
+[.columns]
 === L'installation
 
-On commence souvent par ça
 
-[%step]
+[.column]
+--
+image::images/git.png[git,100px]
+image::images/npm.png[npm,100px]
+image::images/logo-composer-transparent.png[composer,100px]
+--
+
+[.column]
+--
+image::images/docker-compose.png[docker,100px]
+image::images/doctrine-logo.svg[doctrine,100px]
+--
+
+[NOTE.speaker]
+====
 * git clone
 * build (npm, yarn, composer)
 * docker compose up (éventuellement)
 * Et après ?
+====
 
 === Et Pour les données, on a ?
 
@@ -42,18 +57,27 @@ Le bon vieux dump (de prod)
 
 [.columns]
 == Qui suis-je ?
+
 [.column]
 --
-* **Nicolas Guérinet**
-* Onepoint
-* Lead tech PHP
-* Architecte backend
+image::images/avatar.png[nico,80%]
+--
+
+[.column.has-text-left]
+--
+**Nicolas**
+
+Développeur PHP, Symfony
+
+TechLead PHP, Architecte
 --
 
 [.column]
 --
-image::images/avatar.png[]
+image::images/gop-mini.png[gop,80px,float="left"]
+onepoint BDX
 --
+
 
 == Comment générer des données
 
