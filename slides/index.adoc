@@ -9,50 +9,106 @@
 :customcss: css/custom.css
 :toc:
 
+[NOTE.speaker]
+====
+Bonjour merci aux organisateurs de me permettre de participer au sud ouest Days.
+
+Aujourd'hui, je vais vous parler de fixtures mais pas que, et si on allait au-delà des données ?
+
+====
+
 == Quand vous arrivez sur un projet...
 
-Comment cela se passe-t-il ?
+[NOTE.speaker]
+====
+Je ne sais pas pour vous, mais en général, pour moi, quand je commence à travailler sur un projet existant.
 
+Cela commence par cela.
+====
 
 [.columns]
-=== L'installation
-
-
-[.column]
---
-image::images/git.png[git,100px]
-image::images/npm.png[npm,100px]
-image::images/logo-composer-transparent.png[composer,100px]
---
+[%notitle]  
+=== L'installation ...
 
 [.column]
 --
-image::images/docker-compose.png[docker,100px]
-image::images/doctrine-logo.svg[doctrine,100px]
+image::images/intro/readme.png[readme,100px]
+--
+[.column]
+--
+image::images/intro/git.png[git,100px]
+--
+
+[.column]
+--
+image::images/intro/npm.png[npm,100px]
+--
+
+[.column]
+--
+image::images/intro/logo-composer-transparent.png[composer,100px]
+--
+
+[.column]
+--
+image::images/intro/docker-compose.png[docker,100px]
+--
+
+[.column]
+--
+image::images/intro/doctrine-logo.svg[doctrine,100px]
 --
 
 [NOTE.speaker]
 ====
-* git clone
-* build (npm, yarn, composer)
-* docker compose up (éventuellement)
-* Et après ?
+* Je lis le readme, oui oui, c'est intéressant à lire, bon ok pas tout, mais au moins les étapes d'installation.
+* Je récupère les sources,
+* J'installe les dépendances,
+* Je lance les containers ou configure nos briques techniques.
+* J'initialise le schéma de base de données et je lance mes migrations
+* Et je suis prêt à travailler, enfin presque.
+
 ====
 
-=== Et Pour les données, on a ?
+[.columns]
+=== Et les données ?
 
-[WARNING,step=3]
-Le fameux dump et les 1001 commandes...
+[.column]
+--
+[step=1]
+image::images/intro/task.png[task,300px]
+--
 
-[TIP,step=1]
-La page blanche
+[.column]
+--
+[step=2]
+image::images/intro/old_hdd.png[task,300px]
+--
 
-[IMPORTANT.fade-up,step=2]
-Le bon vieux dump (de prod)
+[.column]
+--
+[step=4]
+image::images/intro/404.png[404,600px]
+--
+
+[.column]
+--
+[step=3]
+image::images/intro/dump_prod.png[dump,300px]
+--
 
 [NOTE.speaker]
 ====
 
+* Finalement, c'est "intéressant" de lire tout le readme, il y a la procédure d'initialisation des données en 300 étapes (ou presque).
+* Ou alors, on a un dump de la base de données de production (anonymisé bien sûr)
+
+Dans mon cas, il n'y avait pas de procédure d'anonymisation ni procédure capilotractée pour l'initialisation des données.
+
+Du coup et comme je n'avais pas envie de tout faire à la main, j'ai commencé à essayer de trouver une solution.
+Apparemment, tout le monde me dit qu'il faut mettre en place des fixtures.
+
+La suite de cette conférence est un retour d'expérience sur la mise en place de fixtures au sein de mon projet.
 ====
 
 [.columns]
@@ -78,362 +134,46 @@ image::images/gop-mini.png[gop,80px,float="left"]
 onepoint BDX
 --
 
-
-== Comment générer des données
-
-[%step]
-* À la main dans l'interface
-* Directement dans la base de données
-* Au travers des API
-* Fixtures & Object Mother
+== Contexte
 
 [NOTE.speaker]
 ====
+Le projet sur lequel nous travaillons est une application web composée de 3 briques.
+Un backend PHP, un front en angular et une brique d'authentification avec KeyCloak.
 
-. Cela marche, mais c'est long
-. Martin Fowler
-====
+Cette application gère des demandes d'agrément.
+Une demande a un cycle de vie complexe, nous avons besoin de mettre en place des jeux de données pour chaque état.
 
-=== "Fixtures" ou "Object Mother" ?
+Présenter le workflow MAR et présenter notre workflow
 
-[quote, wikipedia]
-____
-Une fixture est un morceau de code qui permet de fixer un contexte pour exécuter des tests logiciels.
+Demande => ajout de fichier => deposer la demande => donner son avis par périmètre => finaliser agrément
 
-Ce contexte est un invariant permettant la prédiction des résultats de test.
-____
+Une demande comprend
+* l'identité de notre demandeur,
+* des informations sur ses qualifications.
+* des informations sur sa société.
+* plusieurs fichiers relatifs à sa demande
+* un périmètre d'intervention sur lequel son agrément va être valide.
 
-[quote, Martin Fowler]
-____
-An object mother is a kind of class used in testing to help create example objects that you use for testing.
-Pour la suite, nous allons parler de fixture.
-____
+Une fois un dossier constitué un demandeur va déposer son dossier.
+Ces demandes sont instruites par des instructeurs et des superviseurs.
+Une demande déposée va être ensuite affectée à un instructeur par un superviseur.
+L'instructeur instruit le dossier et donne son avis passant ensuite la main à un superviseur.
+Le superviseur va confirmer ou non l'avis de l'instructeur et valider ou refuser la démande d'agrément.
 
-[NOTE.speaker]
-====
-* Nom différent
-* Mais principe identique
-====
+Chaque étape doit être historisée afin de permettre un audit de ce process étape par étape et tracer qui à fait quelle action.
 
-=== Quelques exemples de fixtures
+J'ai donc besoin de créer des données pour chacune de ces opérations.
 
-[%step]
-* Initialiser une base de données ;
-* Initialiser un environnement vierge ;
-* Copier des données connues à partir de fichiers ;
-* Préparer des objets fictifs, des mocks.
-
-=== Et pour les outils
-
-* Django (Python)
-* FixtureBuilder ou FactoryBot (Ruby)
-* Laravel Factory ou DoctrineFixturesBundle (PHP)
-* FixtureFactory (Java)
-* Faker ou Factory-girl (Node)
-
-[NOTE.speaker]
-====
-* Django : Utilise des fixtures pour charger des données initiales dans la base de données.
-* Laravel avec Laravel Factory (PHP) - Bien que plus orienté vers les usines, il est utilisé pour générer des données de test.
-* Symfony avec DoctrineFixturesBundle (PHP) - Permet de charger des données de test dans la base de données.
-* FixtureBuilder (Ruby) - Utilisé pour créer des données de test via code.
-* FixtureFactory (Java) est une bibliothèque qui permet de créer facilement des objets de test avec des données prédéfinies.
-====
-
-=== Génération de données
-
-Tous ces outils permettent de générer des données
-[%step]
-* Objets par objets
-* Avec des données aléatoires
-* Outillent la création d'objets
-
-[%step]
-Mais sont très dépendants du code.
-
-[NOTE.speaker]
-====
-Tous ces frameworks permettent de générer des données, souvent aléatoirement, mais surtout unitairement.
-
-La preuve : si l'on demande à un chat un exemple de fixtures, à chaque fois, il parle de `setUp` et `tearDown`.
-
-Les fakers pour les données aléatoires :
-
-* java-faker
-* faker-js
-* FakerPHP
-
-====
-
-== Pour que ce soit plus clair
-
-Prenons un exemple d'une librairie en ligne
-
-[%step]
-
-[NOTE.speaker]
-====
-On pourrait ajouter un front, mais c'est souvent mieux d'imaginer ce que vous voulez
-====
-
-=== Nos objets métiers
-
-[%step]
-* Des utilisateurs
-* Des livres
-* Des commandes
-* Des commentaires
-* ...
-
-[%notitle]
-=== Schéma BDD
-
-image::images/database.svg[bdd,75%]
-
-=== Un client, qu'est-ce que c'est ?
-
-[source, php]
-----
-$client = new User();
-$client->setEmail('test@test.test');
-----
-
-[NOTE.speaker]
-====
-Test => Ok, mais on a besoin de plus de données.
-====
-
-=== Un client, c'est aussi
-
-[source, php]
-----
-$client = new User();
-$client->setEmail('test@test.test');
-$client->setFirstname('John');
-$client->setLastname('Doe');
-$client->setRoles([Role::ROLE_CLIENT]);
-----
-
-=== Mais aussi, une adresse
-
-[source, php]
-----
-$address = new Address();
-$address->setStreet('1 rue de la paix');
-$address->setZipCode('75000');
-$address->setCity('Paris');
-$address->setLabel('Domicile');
-$client->addAddress($address);
-----
-
-=== Sans commande, c'est triste
-
-[source, php]
-----
-$order = new Order();
-$order->setClient($client);
-$order->setStatus(Order::INITIAL);
-$order->setDeliveryAddress(clone $client->getAddresses()[0]);
-$order->setBillingAddress(clone $client->getAddresses()[0]);
-----
-
-[NOTE.speaker]
-====
-On a un client, une commande, mais il nous manque un panier
-====
-
-=== Il nous faut un panier
-
-[source, php]
-----
-$cart = new Cart();
-$cart->setClient($client);
-$order->setCart($cart);
-----
-[%step]
-Qui dit panier, dit livre, un prix, un auteur
-
-[%step]
-[source, php]
-----
-$author = new Author();
-$author->setFirstName('John');
-$author->setLastName('Doe');
-
-$book = new Book();
-$book->setTitle('Le livre');
-$book->setAuthor($author);
-$book->setPrice(10);
-
-$cartBook = new CartBook();
-$cartBook->setBook($book);
-$cartBook->setQuantity(1);
-$cart->addCartBook($cartBook);
-----
-
-=== En plus, nos commandes ont une vie
-
-[%notitle]
-=== Workflow
-
-image::images/workflow.png[workflow,30%]
-
-=== Nous avons enfin besoin de :
-
-[%step]
-* Un historique à chaque étape
-* Des traitements automatiques (paiement, livraison)
-* La persistance des données
-* Les données temporelles
-
-[NOTE.speaker]
-====
-Date de création, de paiement, de livraison
-====
-
-=== Ne le ferions-nous pas déjà ?
-
-[source, php]
-----
-function createCart(UserInterface $user, Book $book, int $quantity)
-{
-    $cart = new Cart();
-    $cartBook = new CartBooks();
-    $cartBook->setBook($book);
-    $cartBook->setQuantity($quantity);
-    $cart->addBook($cartBook);
-
-    $this->entityManager->persist($cart);
-
-    $history = new Historique(
-        user: $user,
-        action: 'create',
-        etat: Order::INITIAL,
-        comment: 'création panier',
-        detailAction: "ajout livre {$book->getTitle()} en quantité {$quantity}"
-    );
-
-    $this->entityManager->persist($history);
-    $this->entityManager->flush();
-}
-----
-
-[NOTE.speaker]
-====
-Handler, Action, Controller, Service, ...
-====
-
-[%notitle]
-=== Ne le ferions-nous pas déjà ? 2/
-
-On sait créer une commande
-
-[source, php]
-----
-public function createOrder(UserInterface $user, Book $book, int $quantity): Order
-{
-    $order = new Order();
-    $order->setCart(
-        $this->cartService->createCart(user: $user, book: $book, quantity: $quantity)
-    );
-    $order->setStatus(Order::INITIAL);
-    $this->entityManager->persist($order);
-
-    $history = new Historique(
-        user: $user,
-        action: 'create',
-        etat: Order::INITIAL,
-        comment: null,
-        detailAction: "création de la commande avec le livre {$book->getTitle()} en quantité {$quantity}"
-    );
-    $this->entityManager->persist($history);
-
-    $this->entityManager->flush();
-
-    return $order;
-----
-
-[%notitle]
-=== Ne le ferions-nous pas déjà ? 3/
-
-Nous savons créer un client
-
-[source, php]
-----
-public function createClient(string $firstName, string $lastName, string $email, string $password)
-{
-    $client = new User();
-    $client->setFirstName($firstName);
-    $client->setLastName($lastName);
-    $client->setEmail($email);
-    $client->setRoles([Role::ROLE_CLIENT]);
-
-    $client->setUuid($this->identityService->createUser($client, $password));
-
-    $history = new Historique(
-        user: $client,
-        action: 'create',
-        detailAction: "création du client {$client->getEmail()}"
-    );
-    $this->entityManager->persist($history);
-    $this->entityManager->persist($client);
-    $this->entityManager->flush();
-}
-----
-
-[%notitle]
-=== Ne le ferions-nous pas déjà ? 4/
-
-Même un profil de vendeur
-
-[source, php]
-----
-public function createSeller(string $firstName, string $lastName, string $email, string $password): void
-{
-    $manager = new User();
-    $manager->setFirstName($firstName);
-    $manager->setLastName($lastName);
-    $manager->setEmail($email);
-    $manager->setRoles([Role::ROLE_SELLER]);
-
-    $manager->setUuid($this->identityService->createUser($manager, $password));
-
-    $history = new Historique(
-        user: $manager,
-        action: 'create',
-        detailAction: "création du vendeur {$manager->getEmail()}"
-    );
-    $this->entityManager->persist($history);
-    $this->entityManager->persist($manager);
-    $this->entityManager->flush();
-}
-----
-
-== On va s'outiller un peu
-
-=== Symfony et les fixtures
-
-* FixtureBundle pour la génération de données
-* SymfonyClock pour la gestion de l'heure
-
-[NOTE.speaker]
-====
-Pour la suite de cette présentation, je vais me concentrer sur PHP et le framework Symfony.
-Préciser que le principe est transposable sur d'autres frameworks/langages.
+Comme précisé précédemment, on m'a conseillé de mettre en place des fixtures.
+Le projet étant en symfony, je me suis ainsi tourné vers le DoctrineFixtureBundle de Symfony.
 ====
 
 === FixtureBundle
 
-[quote, symfony.com - DoctrineFixturesBundle]
-____
-Fixtures are used to load a "fake" set of data into a database that can then be used for testing or to help give you some interesting data while you're developing your application.
-____
-
-=== FixtureBundle
-
-* Permet l'ordonnancement de la création de données
-* Fournit un registre de données
-* Permet la gestion de l'écrasement des données
+ Permet l'ordonnancement de la création de données
+ Fournit un registre de données
+ Permet la gestion de l'écrasement des données
 
 [NOTE.speaker]
 ====
@@ -443,8 +183,147 @@ ____
 * BDD
 ** Ajout seul
 ** Purge avec suppression partielle
-
 ====
+
+=== Première étape
+
+[source, php,%linenums,highlight="1..4|5..8|10..12|13"]
+----
+class AppFixturesBasis extends Fixture
+{
+    public function load(ObjectManager $manager): void
+    {
+        $demandeur = new Demandeur();
+        $demandeur->setEmail('test@test.test');
+        $demandeur->setFirstname('John');
+        $demandeur->setLastname('Doe');
+
+        $manager->persist($demandeur);
+        $manager->flush();
+
+        $this->addReference('DEMANDEUR', $demandeur);
+    }
+}
+----
+
+[NOTE.speaker]
+====
+
+Ok on a un objet Demandeur mais un demandeur c'est beaucoup de données.
+Et un utilisateur doit se connecter à Keycloak.
+Il faut donc créer une fonction permettant de créer un utilisateur dans Keycloak.
+N'a-t-on pas un service qui permet de créer un utilisateur dans l'application ?
+====
+
+=== Créons donc un Candidat.
+
+[source, php,%linenums,highlight="3..10|11"]
+----
+public function load(ObjectManager $manager): void
+{
+    $candidate = new Candidate();
+
+    $candidate->setFirstName("John");
+        ->setLastName("Doe")
+        ->setEmail("john.doe@test.test")
+        ->setSiren("123456789")
+        ->setName("Société")
+        ->setPassword("motDePasse");
+    $this->candidateService->create($candidate);
+    $candidate->getUser()->setRoles([Role::ROLE_DEMANDEUR->name]);
+}
+----
+
+[NOTE.speaker]
+====
+Maintenant, on a un candidat, mais surtout un candidat avec lequel on pourra se connecter dans l'application.
+====
+
+=== Passons donc aux demandes
+
+[source, php,%linenums,highlight="7..28|30"]
+----
+$candidate = $this->creeDemandeur("John", "Doe", "john.doe@test", "123456789", "Société", "motDePasse");
+$candidate->getUser()->setRoles([Role::ROLE_DEMANDEUR->name]);
+$commune = $this->communeRepository->findOneBy(['nom' => 'Bordeaux']);
+
+$param = [
+    'demandeur' => [
+        'tel' => '+33600000000',
+        'company' => [
+            'email' => 'company@boite.mail',
+            'tel' => '+33600000000',
+            'formeJuridique' => 'autres',
+            'creationDate' => '2024-01-01',
+        ],
+    ],
+    'adresse' => [
+        'adresse1' => 'numéro, nom de la voie',
+        'adresse2' => 'complément adresse',
+        'codePostal' => $commune->getCodePostaux()[0],
+        'codeDepartement' => $commune->getDepartement()->getCode(),
+        'ville' => $commune->getNom(),
+    ],
+];
+
+return $this->demandeService->creeDemande($demandeur, $param);
+----
+
+[NOTE.speaker]
+====
+Une demande, c'est beaucoup d'informations, mais dans notre cas ce qui nous intéresse c'est le périmètre de la demande.
+On peut également factoriser notre code pour le demandeur.
+Là encore, on pourrait créer tous les objets, mais on a un service qui nous permet cela.
+Encore une fois, on va utiliser le service pour créer notre demande.
+====
+
+=== Les fichiers
+
+image::images/fichier_test.png[fichier,300px]
+
+
+[NOTE.speaker]
+====
+La complexité est qu'une demande est composée de plusieurs fichiers.
+Et qu'il faut les télécharger sur l'application.
+Le contenu du fichier, on s'en moque un peu, mais il faut qu'il y en ait un pour que par la suite on puisse les manipuler dans l'application.
+====
+
+=== Les fichiers
+
+[source,php,%linenums,highlight="1..9|11..19"]
+----
+public function createUploadedFile(string $nom): UploadedFile
+{
+    $this->filesystem->copy(
+        originFile:'/var/www/html/src/DataFixtures/test_files/test.pdf',
+        targetFile: "/tmp/$nom",
+        overwriteNewerFiles: true);
+
+    return new UploadedFile("/tmp/$nom", $nom, 'application/pdf', test: true);
+}
+
+$this->pieceJointeService->createPieceJointe(
+    new PieceJointeModel(
+        $nom,
+        $this->fixtHelpers->createUploadedFile($nom),
+        $demande,
+        $demande->getDemandeur(),
+        $codeTypePj
+    )
+);
+
+=== Récapitulons
+
+
+
+----
+
+[NOTE.speaker]
+====
+On a donc une fonction qui permet de créer un fichier qui pourra être manipulé par notre application
+====
+
 
 === SymfonyClock
 
@@ -461,275 +340,6 @@ NativeClock pour la prod
 MockClock pour les tests
 MonotonicClock pour les tests de performances ou le monitoring
 ====
-
-== Revenons à notre librairie
-[NOTE.speaker]
-====
-
-Rappeler le contexte
-
-====
-
-=== Racontons donc une histoire
-
-Monsieur Client veut acheter deux exemplaires de "La Roue du Temps".
-
-[.columns]
-=== Le parcours de Monsieur Client
-[%step]
-[.column.has-text-left]
-* Il fait son panier, le 29/02/2032 à 10h10,
-* Il crée son compte à 10h20,
-* Il le complète à 10h30,
-* Il paye par virement à 10h40,
-* Le paiement est validé le 01/03 à 06h10,
-
-[%step]
-[.column.has-text-left]
-* La commande est préparée le 03/03 à 06h00,
-* La commande est expédiée le 03/03 à 06h30,
-* Est enfin livrée le 15/03 à 10h10.
-* Il le confirme le soir à 19h00
-
-=== Si on devait le décrire
-
-[source,%linenums, yaml]
-----
-description: "Monsieur Client veut acheter deux exemplaires de La Roue du Temps"
-client:
-  email: "monsieur.client@client"
-  prenom: "Prénom Test"
-  nom: "Nom Test"
-  date_creation: "2032-02-29T10:10:00+02:00"
-  addresses:
-    - adresse1: "numéro, nom de la voie"
-      adresse2: "complément adresse"
-      commune: "Ville"
-      code_postal: "12345"
-panier:
-    - livre:
-          titre: "La Roue du Temps"
-          author:
-                prenom: "Robert Jordan"
-                nom: "Brandon Sanderson"
-          prix: 8.95
-      quantite: 2
-----
-
-[NOTE.speaker]
-====
-On ne veut pas un objet auteur par livre
-Ni d'un livre par panier.
-====
-
-=== Réutilisons nos livres et nos auteurs
-
-[source, yaml,highlight=1..3|5..10 ]
-----
-reference: "AUTEUR_ROBERT_JORDAN"
-prenom: "Robert"
-nom: "Jordan"
-
-reference: "ROUE_DU_TEMPS_27"
-titre: "La Roue du Temps"
-auteur: "AUTEUR_ROBERT_JORDAN"
-prix: 8.95
-isbn: "978-2-266-11111-1"
-description: "La Roue du Temps, tome 27, un souvenir de lumière partie 1"
-
-----
-
-=== Maintenant, on les stocke
-
-[%step]
-[source, php,%linenums, highlight=7..8|15..16]
-----
-public function __construct(
-    ParameterBagInterface $parameterBag,
-    private readonly BookFixtureService $bookService,
-)
-{
-    $this->io = new SymfonyStyle(new ArrayInput([]), new ConsoleOutput());
-    $this->authorsDir = $parameterBag->get('app.fixtures.config_scenarii') . '/authors';
-    $this->booksDir = $parameterBag->get('app.fixtures.config_scenarii') . '/books';
-}
-public function load(ObjectManager $manager): void
-{
-    $finder = new Finder();
-    $finder->sortByName(true);
-
-    $this->loadAuthors($finder, $manager, $this);
-    $this->loadBooks($finder, $manager, $this);
-}
-----
-
-=== Ce qui donne
-
-[%step]
-[source, php,%linenums,highlight="8|15,21"]
-----
-public function createAuthor(AppFixtures $fixtures, ObjectManager $manager, array $config): void
-{
-    $author = new Author();
-    $author->setFirstName($config['prenom']);
-    $author->setLastName($config['nom']);
-
-    $manager->persist($author);
-    $fixtures->addReference($config['reference'], $author);
-}
-
-public function createBook(AppFixtures $fixtures, ObjectManager $manager, array $config): void
-{
-    $book = new Book();
-    $book->setTitle($config['titre']);
-    $book->setAuthor($fixtures->getReference(name: $config['auteur'], class: Author::class));
-    $book->setPrice($config['prix']);
-    $book->setIsbn($config['isbn']);
-    $book->setDescription($config['description']);
-
-    $manager->persist($book);
-    $fixtures->addReference($config['reference'], $book);
-}
-----
-
-[NOTE.speaker]
-====
-On passe l'étape de chargement du YAML
-====
-
-=== Continuons notre histoire
-
-[source, yaml]
-----
-description: "Monsieur Client veut acheter deux exemplaires de La Roue du Temps"
-client:
-  email: "monsieur.client@client"
-  prenom: "Prénom Test"
-  nom: "Nom Test"
-  date_creation: "2032-02-29T10:20:00+02:00"
-  addresses:
-    -
-      adresse1: "numéro, nom de la voie"
-      adresse2: "complément adresse"
-      commune: "Ville"
-      code_postal: "12345"
-panier:
-  - livre: "ROUE_DU_TEMPS_27"
-    quantite: 2
-    date_creation: "2032-02-29T10:10:00+02:00"
-----
-
-=== Avec des rebondissements
-[source, yaml,highlight=2|3..5|6..11]
-----
-    date_creation: "2032-02-29T10:10:00+02:00"
-actions:
-  - action: complete
-    date: "2032-02-29T10:30:00+02:00"
-    user: CLIENT
-  - action: pay
-    date: "2032-02-29T10:40:00+02:00"
-    user: CLIENT
-    payload:
-      mode_paiement: "transfer"
-      iban: "FR1234567890123456789012345"
-  - action: confirm_provisioning
-----
-
-=== Il faut toujours un 3ᵉ tome
-[source, yaml,highlight=2..4|5..7|8..13]
-----
-      iban: "FR1234567890123456789012345"
-  - action: confirm_provisioning
-    date: "2032-03-01T06:10:00+02:00"
-    user: SELLER
-  - action: prepare
-    date: "2032-03-03T06:00:00+02:00"
-    user: SELLER
-  - action: ship
-    date: "2032-03-03T06:30:00+02:00"
-    user: SYSTEM
-    payload:
-        transporteur: "La Poste"
-        numero_suivi: "12345678901234567890"
-  - action: deliver
-    date: "2032-03-15T10:10:00+02:00"
-    user: SYSTEM
-  - action: confirm_delivery
-    date: "2032-03-15T19:00:00+02:00"
-    user: CLIENT
-----
-
-=== Parcourons nos fichiers
-
-[source, php,%linenums,highlight="1..4|5|7..8|10|11..13"]
-----
-private function loadScenarios(Finder $finder, ObjectManager $manager): void
-{
-    foreach ($finder->in($this->scenarioDir) as $file) {
-        $orderConfig = Yaml::parseFile($file->getRealPath());
-        Clock::set(new MockClock($orderConfig['client']['date_creation']));
-
-        $customer = $this->userFixtureService->createCustomer($orderConfig);
-        $this->setReference('CLIENT', $customer);
-
-        $order = $this->orderFixtureService->createOrder($manager, $orderConfig, $this);
-        foreach ($orderConfig['actions'] as $action) {
-            $this->orderFixtureService->executeAction($manager, $this, $action, $order);
-        }
-        if (!empty($this->errors)) {
-            $this->io->error("Les fixtures suivantes sont en erreur :\n - ".implode("\n - ", $this->errors));
-        }
-
-        $manager->flush();
-    }
-}
-----
-
-=== Créer une commande en détail
-
-[source, php, %linenums,highlight="3,4,5|6,7,10"]
-----
-public function createOrder(ObjectManager $manager, array $config, AppFixtures $fixtures): Order
-{
-    Clock::set(new MockClock($config['panier']['date_creation']));
-    $client = $fixtures->getReference('CLIENT', User::class);
-    $order = $this->orderService->createOrder(user: $client);
-    foreach ($config['panier'] as $cartItem) {
-        $this->cartService->addBook(
-            user: $client,
-            cart: $order->getCart(),
-            book: $fixtures->getReference($cartItem['livre'], Book::class),
-            quantity: $cartItem['quantite']
-        );
-    }
-
-    $manager->persist($order);
-    $manager->flush();
-
-    return $order;
-}
-----
-
-=== Et nos actions
-[source, php, %linenums,highlight="3,4|6..11"]
-----
-public function executeAction(ObjectManager $manager, AppFixtures $param, mixed $action, Order $order): void
-{
-    $user = $param->getReference($action['user'], User::class);
-    Clock::set(new MockClock($action['date']));
-    match ($action['action']) {
-        'complete' => $this->orderService->completeOrder($user, $order),
-        'pay' => $this->orderService->configurePayment(order: $order, payload: $action['payload']),
-        'confirm_provisioning' => $this->orderService->confirmProvisioning($user, $order),
-        'prepare' => $this->orderService->prepareOrder($user, $order),
-        'ship' => $this->orderService->shipOrder($user, $order, $action['payload']),
-        'deliver' => $this->orderService->deliverOrder($user, $order),
-        default => throw new FixtureException(message: 'Action inconnue'),
-    };
-    $manager->flush();
-}
-----
 
 == En résumé
 
