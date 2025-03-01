@@ -1,0 +1,82 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://excalidraw-jetbrains-plugin",
+  "elements": [
+    {
+      "id": "U9Gl5N_j2cvRJefUnJUKy",
+      "type": "rectangle",
+      "x": 286.3999938964844,
+      "y": 133.60000610351562,
+      "width": 243.99996948242185,
+      "height": 165.60008239746094,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "frameId": null,
+      "roundness": {
+        "type": 3
+      },
+      "seed": 841994376,
+      "version": 378,
+      "versionNonce": 1056029432,
+      "isDeleted": false,
+      "boundElements": [
+        {
+          "type": "text",
+          "id": "LI7Bs7piKYl2al0Z1yV2a"
+        }
+      ],
+      "updated": 1740833495155,
+      "link": null,
+      "locked": false
+    },
+    {
+      "id": "LI7Bs7piKYl2al0Z1yV2a",
+      "type": "text",
+      "x": 302.3000717163086,
+      "y": 153.9000473022461,
+      "width": 212.19981384277344,
+      "height": 125,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "fillStyle": "solid",
+      "strokeWidth": 2,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "frameId": null,
+      "roundness": null,
+      "seed": 2092039672,
+      "version": 157,
+      "versionNonce": 938449912,
+      "isDeleted": false,
+      "boundElements": null,
+      "updated": 1740833495155,
+      "link": null,
+      "locked": false,
+      "text": "Données géographique\n\nCommunes\nDépartements\nRégions",
+      "fontSize": 20,
+      "fontFamily": 1,
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "baseline": 118,
+      "containerId": "U9Gl5N_j2cvRJefUnJUKy",
+      "originalText": "Données géographique\n\nCommunes\nDépartements\nRégions",
+      "lineHeight": 1.25
+    }
+  ],
+  "appState": {
+    "gridSize": null,
+    "viewBackgroundColor": "#ffffff"
+  },
+  "files": {}
+}

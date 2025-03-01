@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Order;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
@@ -40,4 +41,24 @@ class AppFixturesBasis extends Fixture
             'qualities' => [$config['qualite']],
         ];
     }
+
+
+}
+
+class AppFixtures extends Fixture
+{
+    public function load(ObjectManager $manager): void
+    {
+        $objet = new Order();
+        // Création de données
+        $this->addReference('reference', $objet);
+        $this->getReference('reference',$objet::class);
+    }
+    public function getDependencies(): array
+    {
+        return [
+            AppFixturesBasis::class,
+        ];
+    }
+
 }

@@ -1,0 +1,35 @@
+graph LR
+place0{"brouillon"}
+style place0 fill:#359A58,color:white,stroke-width:1px,stroke:black
+place1("deposee")
+style place1 fill:#9A5713,color:white,stroke-width:1px,stroke:black
+place2("affectee")
+style place2 fill:#25729A,color:white,stroke-width:1px,stroke:black
+place3{{"incomplete"}}
+style place3 fill:#359A58,color:white,stroke-width:1px,stroke:black
+place4("instruite_instructeur")
+style place4 fill:#9A5713,color:white,stroke-width:1px,stroke:black
+place10("complete")
+style place10 fill:#25729A,color:white,stroke-width:1px,stroke:black
+place11{{"complete_complement_demande"}}
+style place11 fill:#359A58,color:white,stroke-width:1px,stroke:black
+place12("complete_complement_recu")
+style place12 fill:#25729A,color:white,stroke-width:1px,stroke:black
+place0-.->|"deposer"|place1
+linkStyle 0 stroke:#359A58,color:#359A58
+place1--->|"affecter_instructeur"|place2
+linkStyle 1 stroke:#9A5713,color:#9A5713,stroke-width:2px
+place2-->|"demander_complement"|place3
+linkStyle 2 stroke:#25729A,color:#25729A,stroke-width:2px
+place3===>|"donner_complement"|place2
+linkStyle 3 stroke:#359A58,color:#359A58
+place2--->|"confirmer_completude"|place10
+linkStyle 4 stroke:#25729A,color:#25729A,stroke-width:2px
+place10--->|"demander_complement_etat_complete"|place11
+linkStyle 5 stroke:#25729A,color:#25729A,stroke-width:2px
+place12--->|"demander_complement_etat_complete"|place11
+linkStyle 6 stroke:#25729A,color:#25729A,stroke-width:2px
+place11===>|"donner_complement_etat_completecomplement_demande"|place12
+linkStyle 7 stroke:#359A58,color:#359A58
+place10------>|"exprimer_avis_instructeur"|place4
+linkStyle 8 stroke:#25729A,color:#25729A,stroke-width:2px

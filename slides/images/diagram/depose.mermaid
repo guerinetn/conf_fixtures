@@ -1,0 +1,12 @@
+flowchart
+    verif("Vérification") --> workflow("Changement d'état")
+    workflow --> bdd("Persistance données")
+    bdd --> histo("Création d'un Historique") & mail("Envoi d'un messsage")
+
+    depose("Depose demande") -->verif
+    style verif stroke:#000000,fill:#BEF6AC
+    style workflow stroke:#000000,fill:#E9A3B2
+    style bdd stroke:#000000,fill:#E9A3B2
+    style histo stroke:#000000,fill:#C3EFE0
+    style mail stroke:#000000,fill:#C3EFE0
+    style depose stroke:#000000,fill:#E1F0D4

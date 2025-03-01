@@ -171,18 +171,33 @@ Le projet étant en symfony, je me suis ainsi tourné vers le DoctrineFixtureBun
 
 === FixtureBundle
 
- Permet l'ordonnancement de la création de données
- Fournit un registre de données
- Permet la gestion de l'écrasement des données
+[source,php,%linenums,highlight="1|3..6|8|12..13"]
+----
+class AppFixtures extends Fixture
+{
+    public function getDependencies(): array
+    {
+        return [];
+    }
+
+    public function load(ObjectManager $manager): void
+    {
+        $objet = new Object();
+
+        $this->addReference("reference", $objet);
+        $this->getReference("reference", $objet::class);
+    }
+}
+----
+
 
 [NOTE.speaker]
 ====
-
-* Jouer différents jeux de données
-* Permettre de stocker certaines références pour les réutiliser (un utilisateur spécial, un produit)
-* BDD
-** Ajout seul
-** Purge avec suppression partielle
+Permet la création de classe dépendant de fixutre
+Toutes ces classes  du dossier fixutre sont exécutées.
+Get dépendencies permet l'intégration de dépendance entre le fixutres
+Le manager permet d'accéder à l'entity manager et donc accéder à la base de données.
+Dernier mécanisme le register de référence, permettant d'accéder à des objets déjà créés.
 ====
 
 === Première étape
@@ -197,6 +212,7 @@ class AppFixturesBasis extends Fixture
         $demandeur->setEmail('test@test.test');
         $demandeur->setFirstname('John');
         $demandeur->setLastname('Doe');
+        $demandeur->setRoles([Role::ROLE_DEMANDEUR->name]);
 
         $manager->persist($demandeur);
         $manager->flush();
@@ -209,15 +225,15 @@ class AppFixturesBasis extends Fixture
 [NOTE.speaker]
 ====
 
-Ok on a un objet Demandeur mais un demandeur c'est beaucoup de données.
-Et un utilisateur doit se connecter à Keycloak.
-Il faut donc créer une fonction permettant de créer un utilisateur dans Keycloak.
+Ok, nous avons un objet Demandeur, mais un demandeur c'est avant tout un utilisateur de l'application.
+Il doit donc être présent dans ma briqure d'authentification.
+Il faut donc également créer un utilisateur dans dans Keycloak.
 N'a-t-on pas un service qui permet de créer un utilisateur dans l'application ?
 ====
 
 === Créons donc un Candidat.
 
-[source, php,%linenums,highlight="3..10|11"]
+[source, php,%linenums,highlight="3|5..10|11"]
 ----
 public function load(ObjectManager $manager): void
 {
@@ -230,18 +246,96 @@ public function load(ObjectManager $manager): void
         ->setName("Société")
         ->setPassword("motDePasse");
     $this->candidateService->create($candidate);
-    $candidate->getUser()->setRoles([Role::ROLE_DEMANDEUR->name]);
 }
 ----
 
 [NOTE.speaker]
 ====
 Maintenant, on a un candidat, mais surtout un candidat avec lequel on pourra se connecter dans l'application.
+
+Candidate Service :
+
+* Création d'un utilisateur dans Keycloak
+* Sauvegarde en bdd
+* Envoi du mail d'activation du compte
+* Création d'un historique de création
+====
+
+=== Avons-nous tout ce qu'il nous faut ?
+
+[%step]
+[source, php,%linenums,highlight="5..7|1..3,9..18"]
+----
+class GeographicDataFixtures extends Fixture
+{
+    public function load(ObjectManager $manager): void
+    {
+        $this->departementRegionCommand->execute($this->input, $this->output);
+        $this->epcisCommand->execute($this->input, $this->output);
+        $this->communesCommand->execute($this->input, $this->output);
+    }
+}
+
+class AppFixtures extends Fixture
+{
+    public function getDependencies(): array
+    {
+        return [
+            GeographicDataFixtures::class,
+        ];
+    }
+----
+
+
+[NOTE.speaker]
+====
+On a donc un candidat, mais il nous faut également des instructeurs.
+Comme pour les demandeurs, nous avons des services pour créer les instructeurs.
+et nous allons créer des superviseur.
+Sauf que nous avons besoin de données géographiques pour les instructeurs et les superviseurs.
+Heureusement, nous avons un service qui permet de créer des communes, des départements et des régions.
+====
+
+=== Les intervenants
+
+[source,php,%linenums,highlight="1..8|12|13..19|20|1..20"]
+----
+class IntervenantFixtures extends Fixture implements DependentFixtureInterface
+{
+    public function getDependencies(): array
+    {
+        return [
+            GeographicDataFixtures::class,
+        ];
+    }
+
+    public function load(ObjectManager $manager): void
+    {
+        foreach ($this->departementRepository->findAll() as $departement) {
+            $instructeur = new Intervenant();
+            $email = "instructeur_{$dpt->getCode()}@test.test";
+            $instructeur->setFirstName('Instructeur')
+                ->setLastName($departement->getNom())
+                ->setEmail($email)
+                ->setRoles([Role::ROLE_INSTRUCTEUR->name])
+                ->setPerimetreSupervision((new PerimetreIntervention())->addDepartement($dpt));
+            $this->intervenantService->create($instructeur);
+        }
+    }
+}
+----
+
+[NOTE.speaker]
+====
+* Dépendant géo
+* On parcourt tous les départements, on crée un instructeur par département.
+* On appelle le service pour créer l'instructeur.
+* On prendra ensuite un principe similaire en parcours les régions pour créer des superviseurs.
 ====
 
 === Passons donc aux demandes
 
-[source, php,%linenums,highlight="7..28|30"]
+[source, php,%linenums,highlight="1..3|5..21|23|1..23"]
 ----
 $candidate = $this->creeDemandeur("John", "Doe", "john.doe@test", "123456789", "Société", "motDePasse");
 $candidate->getUser()->setRoles([Role::ROLE_DEMANDEUR->name]);
@@ -251,10 +345,9 @@ $param = [
     'demandeur' => [
         'tel' => '+33600000000',
         'company' => [
-            'email' => 'company@boite.mail',
-            'tel' => '+33600000000',
-            'formeJuridique' => 'autres',
             'creationDate' => '2024-01-01',
+            'formeJuridique' => 'autres',
+            'perimetreIntervention' => ['departement' => $commune->getDepartement()->getNom()],
         ],
     ],
     'adresse' => [
@@ -277,21 +370,24 @@ Là encore, on pourrait créer tous les objets, mais on a un service qui nous pe
 Encore une fois, on va utiliser le service pour créer notre demande.
 ====
 
-=== Les fichiers
+=== La problématique des fichiers
 
 image::images/fichier_test.png[fichier,300px]
-
+       
 
 [NOTE.speaker]
 ====
+* Demande === *BEAUCOUP* de fichiers.
+* Fichier === stockage sur disque et pas *que* en bdd
+
 La complexité est qu'une demande est composée de plusieurs fichiers.
 Et qu'il faut les télécharger sur l'application.
 Le contenu du fichier, on s'en moque un peu, mais il faut qu'il y en ait un pour que par la suite on puisse les manipuler dans l'application.
 ====
 
-=== Les fichiers
+=== La problématique des fichiers
 
-[source,php,%linenums,highlight="1..9|11..19"]
+[source,php,%linenums,highlight="1..9|10..14|17..22|16|1..23"]
 ----
 public function createUploadedFile(string $nom): UploadedFile
 {
@@ -303,43 +399,149 @@ public function createUploadedFile(string $nom): UploadedFile
     return new UploadedFile("/tmp/$nom", $nom, 'application/pdf', test: true);
 }
 
-$this->pieceJointeService->createPieceJointe(
-    new PieceJointeModel(
-        $nom,
-        $this->fixtHelpers->createUploadedFile($nom),
-        $demande,
-        $demande->getDemandeur(),
-        $codeTypePj
-    )
-);
-
-=== Récapitulons
-
-
+public function addPjsBrouillon(
+        DemandeAgrement $demande,
+        string $nom,
+        string $codeTypePj,
+    ): PieceJointe {
+        return $this->pieceJointeService->createPieceJointe(
+            new PieceJointeModel(
+                $nom,
+                $this->fixtHelpers->createUploadedFile($nom),
+                $demande,
+                $demande->getDemandeur(),
+            )
+        );
+    }
 
 ----
 
 [NOTE.speaker]
 ====
-On a donc une fonction qui permet de créer un fichier qui pourra être manipulé par notre application
+On a donc une fonction qui permet de créer un fichier qui pourra être manipulé par notre application.
+Pour aller plus loin, on va également utiliser le service de l'application pour finaliser la création d'un fichier.
 ====
+
+=== Demandes & fichiers
+
+[source,php,%linenums,highlight=1..2|4..6]
+----
+$demande = $this->getReferece('DEMANDE', Demande::class);
+
+foreach (Demande::Procedure as $typePj) {
+    $this->fixtureService->addPjsBrouillon($demande, "test_{$type}.pdf", $typePj->code());
+}
+----
+
+[NOTE.speaker]
+====
+L'utilisateur télécharge les fichiers un à un par demande dans le parcours de création.
+Nous connaissons les types de fichiers nécessaire pour une demande.
+Notre demande est donc complète.
+====
+
+
+=== Ce n'est que le début de l'histoire
+
+image::images/workflow_mar_complet.svg[workflow,30%]
+
+
+=== Ce n'est que le début de l'histoire
+
+image::images/workflow_mar_simplifie.svg[workflow,100%]
+
+=== Ce n'est que le début de l'histoire
+
+image::images/workflow_mar_start.svg[workflow,100%]
+
+[NOTE.speaker]
+====
+
+* Vert => demandeur
+* Orange/Marron => Superviseur
+* Bleu => Instructeur
+
+Brouillon => Déposée => Affectée <=> Incomplete => Complete
+====
+
+=== Dépôt d'une demande
+
+[source,php]
+----
+$demande = $this->getReferece('DEMANDE', Demande::class);
+$demandeur = $this->getReferece('DEMANDEUR', Demandeur::class);
+
+$this->demandeService->deposer(user: $demandeur, demande: $demande);
+----
+
+[NOTE.speaker]
+====
+Action simple, besoin d'une demande d'un demandeur.
+Par contre l'action de déposer une demande va déclencher une série d'événements.
+====
+
+=== Dépôt d'une demande
+
+image::images/depose_diagram.svg[depose]
+
+=== Demande de complément et réponse
+
+image::images/workflow_mar_start.svg[workflow,100%]
+
+=== Et on continue le parcours
+
+[source,php,%linenums,highlight="1..4|6|8|10..13|15|1..15"]
+----
+$demande = $this->getReferece('DEMANDE', Demande::class);
+$demandeur = $this->getReferece('DEMANDEUR', Demandeur::class);
+$instructeur = $this->getReferece('INSTRUCTEUR', Intervenant::class);
+$superviseur = $this->getReferece('SUPERVISEUR', Intervenant::class);
+
+$this->demandeService->affecterDemande(user: $superviseur, demande: $demande, instructeur: $instructeur);
+
+$this->demandeService->demanderComplément(user: $instructeur, demande: $demande, commentaire: 'Commentaire');
+
+$this->demandeService->addPjsBrouillon($demande, "complement1.pdf", "complement");
+$this->demandeService->addPjsBrouillon($demande, "complement2.pdf", "complement");
+
+$this->demandeService->donnerComplement(user: $demandeur, demande: $demande);
+
+$this->demandeService->confirmerCompletude(user: $instructeur, demande: $demande);
+----
+
+=== Et on continue le parcours
+
+image::images/workflow_mar_start.svg[workflow,100%]
+
+[NOTE.speaker]
+====
+C'est parfait je teste j'arrive à me connecter avec un utilisateur et je confirme que la demande est bien à l'état complet.
+Bon par contre l'historique n'est pas du tout réaliste.
+
+Le demandeur à déposé 25 fichiers, l'instructeur les a contrôlé et a demandé des compléments, le demandeur a répondu et l'instructeur a confirmé la complétude.
+Le tout a 1,3 seconde.
+Pas très réaliste.
+====
+
+[%notitle]
+=== Il est temps de voyager
+
+image::images/delorean3.png[delorean]
 
 
 === SymfonyClock
 
-[%step]
-* Remplacement de la fonction now()
-* Possibilité de remplacer l'horloge :
-** `NativeClock` : date système standard
-** `MockClock` : fixe l'heure
-** `MonotonicClock` : horloge monotone
+[source, php]
+----
+use function Symfony\Component\Clock\now;
 
-[NOTE.speaker]
-====
-NativeClock pour la prod
-MockClock pour les tests
-MonotonicClock pour les tests de performances ou le monitoring
-====
+// Get the current time as a DatePoint instance
+$now = now();
+
+Clock::set(new MockClock("2024-01-01"));
+
+----
+
 
 == En résumé
 

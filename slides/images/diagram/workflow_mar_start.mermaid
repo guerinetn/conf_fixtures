@@ -1,0 +1,20 @@
+graph LR
+    place0{"brouillon"}
+    style place0 fill:#359A58,color:white,stroke-width:1px,stroke:black
+    place1("deposee")
+    style place1 fill:#9A5713,color:white,stroke-width:1px,stroke:black
+    place2("affectee")
+    style place2 fill:#25729A,color:white,stroke-width:1px,stroke:black
+    place3{{"incomplete"}}
+    style place3 fill:#359A58,color:white,stroke-width:1px,stroke:black
+    place10("complete")
+    style place10 fill:#25729A,color:white,stroke-width:1px,stroke:black
+    place0-.->|"deposer"|place1
+    linkStyle 0 stroke:#359A58,color:#359A58
+    place1--->|"affecter_instructeur"|place2
+    linkStyle 1 stroke:#9A5713,color:#9A5713,stroke-width:2px
+    place2-->|"demander_complement"|place3
+    linkStyle 2 stroke:#25729A,color:#25729A,stroke-width:2px
+    place3===>|"donner_complement"|place2
+    linkStyle 3 stroke:#359A58,color:#359A58
+    place2--->|"confirmer_completude"|place10
