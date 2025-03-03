@@ -21,18 +21,20 @@ body:after {
 
 .reveal {
     font-family: "Poppins", serif;
-    blockquote {
-        width: 90%;
-        background: rgba(88, 101, 149, 0.5);
-
-    }
 
     .quoteblock {
-        font-size: 2rem;
+        font-size: 1.5rem;
 
         .attribution {
             text-align: right;
             margin-right: 6rem;
+        }
+
+        blockquote {
+            width: 90%;
+            background: rgba(146, 167, 255, 0.5);
+            text-align: left;
+            margin-bottom: 10px;
         }
     }
 
@@ -43,6 +45,7 @@ body:after {
         h2 {
             /*font-size: 1.2em;*/
         }
+
         img {
             border: none;
             box-shadow: none;
@@ -71,7 +74,11 @@ body:after {
     #_workflow {
         top: -30px !important;
     }
-
+    #_décrivons_cette_histoire {
+        code{
+            max-height: unset;
+        }
+    }
     #_merci {
         font-size: larger;
     }
@@ -81,11 +88,6 @@ body:after {
             font-size: smaller;
         }
     }
-}
-
-
-.highlightjs .language-php {
-    font-size: 20px;
 }
 
 

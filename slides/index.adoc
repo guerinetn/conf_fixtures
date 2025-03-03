@@ -640,16 +640,118 @@ Créer nos demandes
 
 Gérer la temporalité des actions.
 
-Par contre on a fait que coder
+====
+
+== Outillons-nous
+
+[NOTE.speaker]
+====
+Par contre, on a fait que coder
+Mon besoin principal est de créer des données pour tous les états d'une demande.
+Je ne veux pas avoir à tout écrire à la main.
+
+Nous allons donc voir comment nous pouvons outiller tout cela.
+====
+
+=== Une demande c'est un peu une histoire
+
+[%step]
+"*John Doe* dépose une demande d'agrément, qui est instruite par un *instructeur* et un *superviseur*."
+-- Qui fait quoi
+
+[%step]
+"John Doe dépose une demande d'agrément *sur la gironde* qui est instruite par l'instructeur *Gironde* et le superviseur *Nouvelle Aquitaine*."
+-- que fait-on
+
+[%step]
+"John Doe dépose une demande d'agrément le *20 janvier* sur la gironde qui est instruite *le 15 février* par l'instructeur Gironde et le superviseur Nouvelle Aquitaine, *le premier mars*"
+-- Quand le fait-on ?
+
+[NOTE.speaker]
+====
+La première étape, c'est de savoir qui fait l'action.
+Une information discriminante est également le périmètre de l'agrément.
+Et enfin de savoir quand on fait l'action
+Par contre il y a beacoup d'information qui ont du sens pour un instructeur mais n'ont pas de sens pour nous.
+====
+
+
+
+=== Décrivons cette histoire
+
+[source,%numlines,yaml,highlight="1..27|2,5,14,21..24,26,27"]
+----
+demandeur:
+  email: "john.doe@test"
+  prenom: "John"
+  nom: "Doe"
+  date_creation: "20/01/2023"
+  telephone: "+33612345678"
+signataire:
+  nom: "Nom Signataire"
+  prenom: "Prénom Signataire"
+  qualite: "signataireQuality"
+societe:
+  nom_societe: "MaSociete ÔSiren"
+  email: "company@boite.mail"
+  siren: "123456789"
+  telephone: "+33612345678"
+  forme_juridique: "autres"
+adresse:
+  adresse1: "numéro, nom de la voie"
+  adresse2: "complément adresse"
+  commune: "Bordeaux"
+perimetre_intervention:
+  departements: [33]
+  regions: []
+  precisions: ""
+qualite: "qualite"
+date_modification: "20/01/2023"
+date_creation: "20/01/2023"
+----
+
+=== Décrivons cette histoire
+
+[source,%numlines,yaml,highlight="2..14|1|8..11|8..9|1..14"]
+----
+description: "Mon premier cas de test"
+demandeur:
+  email: "john.doe@test"
+  date_creation: "20/01/2023"
+societe:
+  siren: "123456789"
+  commune: "Bordeaux"
+perimetre_intervention:
+  departements: [33]
+  regions: []
+  precisions: ""
+qualite: "qualite"
+date_modification: "20/01/2023"
+date_creation: "20/01/2023"
+----
+
+=== Schéma
+
+image::images/process2.svg[process,30%]
+
+[NOTE.speaker]
+====
 
 ====
+
+=== Nous n'avons pas besoin de tout.
+
+[.columns]
+[%step]
+[.column]
+
 
 
 == Next
 
-image::images/process.svg[process,75%]
 
-=== Nous avons besoin de quoi
+=== Nous avons besoin de quo
+
 
 [%step]
 * Raconter une histoire (YAML)
