@@ -602,7 +602,7 @@ $this->demandeService->refuserDemande(user: $instructeur, demande: $demande, com
 ----
 
 [.columns.is-vcentered]
-== En résumé
+=== En résumé
 [%step]
 [.column]
 --
@@ -644,6 +644,9 @@ Gérer la temporalité des actions.
 
 == Outillons-nous
 
+[%step]
+image::images/process2.svg[30%]
+
 [NOTE.speaker]
 ====
 Par contre, on a fait que coder
@@ -653,7 +656,7 @@ Je ne veux pas avoir à tout écrire à la main.
 Nous allons donc voir comment nous pouvons outiller tout cela.
 ====
 
-=== Une demande c'est un peu une histoire
+=== Ecrivons le scnéario de notre histoire
 
 [%step]
 "*John Doe* dépose une demande d'agrément, qui est instruite par un *instructeur* et un *superviseur*."
@@ -675,11 +678,9 @@ Et enfin de savoir quand on fait l'action
 Par contre il y a beacoup d'information qui ont du sens pour un instructeur mais n'ont pas de sens pour nous.
 ====
 
-
-
 === Décrivons cette histoire
 
-[source,%numlines,yaml,highlight="1..27|2,5,14,21..24,26,27"]
+[source,%numlines,yaml,highlight="1..23|2,5,7,11,17|18..21|18,19|22,23"]
 ----
 demandeur:
   email: "john.doe@test"
@@ -687,10 +688,7 @@ demandeur:
   nom: "Doe"
   date_creation: "20/01/2023"
   telephone: "+33612345678"
-signataire:
-  nom: "Nom Signataire"
-  prenom: "Prénom Signataire"
-  qualite: "signataireQuality"
+qualite: "qualite"
 societe:
   nom_societe: "MaSociete ÔSiren"
   email: "company@boite.mail"
@@ -705,69 +703,132 @@ perimetre_intervention:
   departements: [33]
   regions: []
   precisions: ""
-qualite: "qualite"
 date_modification: "20/01/2023"
 date_creation: "20/01/2023"
 ----
 
-=== Décrivons cette histoire
+[NOTE.speaker]
+====
+Nous n'avons besoin que de toutes ces données.
+Certaines données sont importantes mais pour l'instruction pas pour l'application.
 
-[source,%numlines,yaml,highlight="2..14|1|8..11|8..9|1..14"]
+Demandeur :
+* mail
+* date,
+* qualité
+* siren
+* commune
+====
+
+=== Juste un pitch
+
+[source,%numlines,yaml,highlight="2..14|1|8..9|1..14"]
 ----
 description: "Mon premier cas de test"
 demandeur:
   email: "john.doe@test"
-  date_creation: "20/01/2023"
+  date_creation: "2023-01-20T10:00:00+02:00"
 societe:
   siren: "123456789"
   commune: "Bordeaux"
 perimetre_intervention:
   departements: [33]
-  regions: []
-  precisions: ""
 qualite: "qualite"
-date_modification: "20/01/2023"
-date_creation: "20/01/2023"
+date_modification: "2023-01-20T10:00:00+02:00"
+date_creation: "2023-01-20T10:00:00+02:00"
 ----
 
-=== Schéma
+[NOTE.speaker]
+====
+On peut par contre ajouter une description histoire de savoir ce que fait le cas de test.
+Même un périmètre d'intervention peut être limité aux données nécessaires.
 
-image::images/process2.svg[process,30%]
+====
+
+=== Créons une fonction générique
+
+[source, php]
+----
+$demandeConfig = $this->demandeFixturesService->checkAndPopulateConfig($file->getRealPath());
+$description = isset($demandeConfig['description']) ? "\n  - {$demandeConfig['description']}" : '';
+$user = "\n  - Demandeur : {$demandeConfig['demandeur']['email']}";
+$this->io->info("Traitement fichier : {$file->getFilename()} $user $description ");
+
+$demandeur = $this->demandeurFixturesService->createDemandeur($demandeConfig);
+$this->setReference('DEMANDEUR', $demandeur);
+
+$demande = $this->demandeFixturesService->createDemande($demandeConfig, $demandeur);
+Clock::set((new MockClock($demandeConfig['date_modification']))->withTimeZone('Europe/Paris'));
+
+$this->demandeFixturesService->completeDemande($demande);
+----
+
+
+=== Et pour les actions
+
+[source.yaml,%numlines,highlight="1|2..5|6..9|10,11|6..11|13..17|19..23,25..27"]
+----
+actions:
+  -
+    user: DEMANDEUR
+    action: DEPOSER
+    date: '2024-01-14T10:00:00+02:00'
+  -
+    user: SUPERVISEUR_75
+    action: AFFECTER_INSTRUCTEUR
+    date: '2024-01-16T08:00:00+02:00'
+    payload:
+      instructeur: 'INSTRUCTEUR_33'
+  -
+    user: INSTRUCTEUR_33
+    action: DEMANDER_COMPLEMENT
+    date: '2024-01-18T18:00:00+02:00'
+    payload:
+      commentaire: 'Demande de complément'
+  -
+    user: DEMANDEUR
+    action: AJOUT_FICHIER
+    date: '2024-01-25T10:00:00+02:00'
+    payload:
+      file_name: 'complement_pj1.pdf'
+  -
+    user: DEMANDEUR
+    action: DONNER_COMPLEMENT
+    date: '2024-01-25T10:00:00+02:00'
+----
 
 [NOTE.speaker]
 ====
 
+* Depose
+* affectation + instructeur
+* Demande de complément
+* Ajout de fichier & donner complément
+
+* Il ne reste plus qu'à parcourir les actions.
 ====
 
-=== Nous n'avons pas besoin de tout.
+=== Schéma
 
-[.columns]
-[%step]
-[.column]
+image::images/process.svg[process,70%]
+
+[NOTE.speaker]
+====
+Nous pouvons donc simplement écrire des scénarios pour tous les états d'une demande.
+====
+
+=== L'environnement d'intégration est tombé...
+
+[NOTE.speaker]
+====
+Suite à un souci de persistence d'un container en environnement d'intégration, nous avons perdu toutes les données.
+Attention aux `docker prune` abusifs.
+Le mécanisme est inscrit dans l'application, rien n'empêche de l'utiliser sur d'autres environnements.
+C'est tout naturellement que nous avons décidé de l'utiliser en environnement d'intégration.
+====
 
 
+== Conclusion
 
-== Next
-
-
-=== Nous avons besoin de quo
-
-
-[%step]
-* Raconter une histoire (YAML)
-* Des objets immuables (YAML)
-* De parcourir des fichiers (PHP)
-* De vérifier un peu (PHP)
-* D'orchestrer tout ça (PHP)
-
-=== Pourquoi faire des fixtures
-
-[%step]
-* Gagner du temps
-* Avoir des données cohérentes
-* Donner du contexte à des tests
-* Vérifier nos services
-* Avoir des données fiables
-* Moins coder.
-
+[NOTE]
 == Merci

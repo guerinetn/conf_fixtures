@@ -74,7 +74,7 @@ body:after {
     #_workflow {
         top: -30px !important;
     }
-    #_décrivons_cette_histoire {
+    #_décrivons_cette_histoire ,#_et_pour_les_actions{
         code{
             max-height: unset;
         }
