@@ -370,10 +370,19 @@ Là encore, on pourrait créer tous les objets, mais on a un service qui nous pe
 Encore une fois, on va utiliser le service pour créer notre demande.
 ====
 
+[.columns]
 === La problématique des fichiers
 
+[.column]
+--
+image::images/logo_pdf.png[logo_pdf,200px]
+image::images/fichier_bash.png[fichier]
+--
+
+[.column]
+--
 image::images/fichier_test.png[fichier,300px]
-       
+--
 
 [NOTE.speaker]
 ====
@@ -523,7 +532,6 @@ Le tout a 1,3 seconde.
 Pas très réaliste.
 ====
 
-[%notitle]
 === Il est temps de voyager
 
 image::images/delorean3.png[delorean]
@@ -539,11 +547,105 @@ use function Symfony\Component\Clock\now;
 $now = now();
 
 Clock::set(new MockClock("2024-01-01"));
-
 ----
 
+[NOTE.speaker]
+====
+SymfonyClock est une librairie qui permet de gérer le temps dans nos tests.
+On peut donc fixer le temps à une date précise. (MockClock) ou utiliser le temps réel (NativeClock).
 
+Avec MockClock on a tout ce qu'il nous faut pour rendre notre cas de test réaliste.
+====
+
+=== C'est parti Marty
+
+[source,php,%linenums,highlight="1..2|1,4,7,10,13|1..14"]
+----
+Clock::set(new MockClock("2024-06-01"));
+$this->demandeService->affecterDemande(user: $superviseur, demande: $demande, instructeur: $instructeur);
+
+Clock::set(new MockClock("2024-06-08"));
+$this->demandeService->demanderComplément(user: $instructeur, demande: $demande, commentaire: 'Commentaire');
+
+Clock::set(new MockClock("2024-06-16"));
+$this->demandeService->addPjsBrouillon($demande, "complement1.pdf", "complement");
+
+Clock::set(new MockClock("2024-07-01"));
+$this->demandeService->addPjsBrouillon($demande, "complement2.pdf", "complement");
+
+Clock::set(new MockClock("2024-07-22"));
+$this->demandeService->donnerComplement(user: $demandeur, demande: $demande);
+----
+
+[NOTE.speaker]
+====
+On peut maintenant fixer le temps pour chaque action.
+En plus de rendre notre test réaliste, cela va nous permettre également d'activer certaines actions.
+Par exemple, il est possible de rejeter une demande si un utilisateur n'a pas répondu dans les 30 jours.
+====
+
+=== C'est parti Marty
+
+[source,php,%linenums,highlight="1..5|7..8|10,11|1..11"]
+----
+Clock::set(new MockClock("2024-06-01"));
+$this->demandeService->affecterDemande(user: $superviseur, demande: $demande, instructeur: $instructeur);
+
+Clock::set(new MockClock("2024-06-08"));
+$this->demandeService->demanderComplément(user: $instructeur, demande: $demande, commentaire: 'Commentaire');
+
+Clock::set(new MockClock("2024-07-09"));
+$this->demandeCommand->checkDelaiReponse();
+
+Clock::set(new MockClock("2024-07-09"));
+$this->demandeService->refuserDemande(user: $instructeur, demande: $demande, commentaire: 'Hors délai');
+----
+
+[.columns.is-vcentered]
 == En résumé
+[%step]
+[.column]
+--
+Données géographiques
+
+Intervenant
+--
+
+[%step]
+[.column]
+--
+Demandeur
+
+Fichiers
+
+Demandes
+--
+
+[%step]
+[.column]
+--
+Le temps
+--
+
+
+[NOTE.speaker]
+====
+Nous avons pu alimenter les données de base (géographique notamment).
+Créer nos intervenants (instruteur, superviseur et admin).
+
+On a un cas de test réaliste avec des utilisateurs qui peuvent se connecter (Demandeur, instructeur, superviseur).
+Nous avons des fichiers que les utilsiateurs peuvent consulter et donc vérifier leur présence.
+On a pu créer nos données de manière cohérente.
+Créer nos demandes
+
+Gérer la temporalité des actions.
+
+Par contre on a fait que coder
+
+====
+
+
+== Next
 
 image::images/process.svg[process,75%]
 
