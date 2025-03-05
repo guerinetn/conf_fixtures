@@ -62,7 +62,6 @@ body:after {
     }
 
     code.language-php {
-        font-size: 18px;
         max-height: 500px;
         line-height: normal;
     }
@@ -71,13 +70,21 @@ body:after {
         max-height: 530px;
     }
 
+    #_un_film_on_en_fait_la_promo{
+        table {
+            font-size: 14px;
+        }
+    }
     #_workflow {
         top: -30px !important;
     }
-    #_décrivons_cette_histoire ,#_et_pour_les_actions{
+    #_décrivons_cette_histoire ,#_action{
         code{
             max-height: unset;
         }
+    }
+    #_scenario_par_defaut code.language-yaml {
+        max-height: 600px;
     }
     #_merci {
         font-size: larger;
@@ -86,6 +93,12 @@ body:after {
     #_le_parcours_de_monsieur_client {
         li {
             font-size: smaller;
+        }
+    }
+    #_un_film_on_en_fait_la_promo{
+        .content pre {
+            font-size: 18px;
+            line-height: normal;
         }
     }
 }

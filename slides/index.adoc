@@ -27,8 +27,9 @@ Cela commence par cela.
 ====
 
 [.columns]
-[%notitle]  
+
 === L'installation ...
+
 
 [.column]
 --
@@ -39,21 +40,25 @@ image::images/intro/readme.png[readme,100px]
 image::images/intro/git.png[git,100px]
 --
 
+[step=1]
 [.column]
 --
 image::images/intro/npm.png[npm,100px]
 --
 
+[step=1]
 [.column]
 --
 image::images/intro/logo-composer-transparent.png[composer,100px]
 --
 
+[step=2]
 [.column]
 --
 image::images/intro/docker-compose.png[docker,100px]
 --
 
+[step=2]
 [.column]
 --
 image::images/intro/doctrine-logo.svg[doctrine,100px]
@@ -100,15 +105,15 @@ image::images/intro/dump_prod.png[dump,300px]
 [NOTE.speaker]
 ====
 
-* Finalement, c'est "intéressant" de lire tout le readme, il y a la procédure d'initialisation des données en 300 étapes (ou presque).
-* Ou alors, on a un dump de la base de données de production (anonymisé bien sûr)
+* Intressant le readme,  procédure d'init  en 300 étapes (ou presque).
+* le vieux dump qui traine dans un coin
+*  le  dump de PROD (anonymisé bien sûr)
+* pas de procédure d'anonymisation / ni procédure capilotractée /rien
 
-Dans mon cas, il n'y avait pas de procédure d'anonymisation ni procédure capilotractée pour l'initialisation des données.
+Pas envie de tout faire à la main, j'ai commencé à essayer de trouver une solution.
+Apparemment, fixtures.
 
-Du coup et comme je n'avais pas envie de tout faire à la main, j'ai commencé à essayer de trouver une solution.
-Apparemment, tout le monde me dit qu'il faut mettre en place des fixtures.
-
-La suite de cette conférence est un retour d'expérience sur la mise en place de fixtures au sein de mon projet.
+Suite REX sur la mise en place de fixtures au sein de mon projet.
 ====
 
 [.columns]
@@ -125,7 +130,7 @@ image::images/avatar.png[nico,80%]
 
 Développeur PHP, Symfony
 
-TechLead PHP, Architecte
+TechLead, Architecte
 --
 
 [.column]
@@ -134,52 +139,106 @@ image::images/gop-mini.png[gop,80px,float="left"]
 onepoint BDX
 --
 
-== Contexte
+== La stack technique
+
+image::images/intro/stack_appli.png[stack]
 
 [NOTE.speaker]
 ====
-Le projet sur lequel nous travaillons est une application web composée de 3 briques.
-Un backend PHP, un front en angular et une brique d'authentification avec KeyCloak.
 
+Je vous ai dit que l'on était sur un retour d'expérience, posons donc le contexte.
+
+Le projet sur lequel nous travaillons est une application web composée de 3 briques.
+* Un backend PHP,
+* un front en angular
+* une brique d'authentification avec KeyCloak.
+
+Mailpit, on ne prend pas de dump de prod ce n'est pas pour enovoyer des mails
+====
+
+=== Contexte
+
+image::images/workflow_mar_complet.png[workflow,30%]
+
+[NOTE.speaker]
+====
 Cette application gère des demandes d'agrément.
+
+Ne cherchez pas à lire, il n'y a rien de marqué.
+
 Une demande a un cycle de vie complexe, nous avons besoin de mettre en place des jeux de données pour chaque état.
 
-Présenter le workflow MAR et présenter notre workflow
+Demande => ajout de fichier => deposer la demande => instruire
 
-Demande => ajout de fichier => deposer la demande => donner son avis par périmètre => finaliser agrément
+====
 
-Une demande comprend
+=== Des demandes et des utilisateurs
+
+* Demandeur
+* Demande
+* Intervenant
+
+[NOTE.speaker]
+====
+
+Demande == Dossier d'information
+
 * l'identité de notre demandeur,
-* des informations sur ses qualifications.
-* des informations sur sa société.
-* plusieurs fichiers relatifs à sa demande
-* un périmètre d'intervention sur lequel son agrément va être valide.
+* Qualif / société.
+* Fichiers
+* Périmètre d'intervention
+
+====
+
+=== l'instruction
+
+image::images/intro/instrution2.png[instruction,40%]
+
+[NOTE.speaker]
+====
 
 Une fois un dossier constitué un demandeur va déposer son dossier.
-Ces demandes sont instruites par des instructeurs et des superviseurs.
-Une demande déposée va être ensuite affectée à un instructeur par un superviseur.
-L'instructeur instruit le dossier et donne son avis passant ensuite la main à un superviseur.
-Le superviseur va confirmer ou non l'avis de l'instructeur et valider ou refuser la démande d'agrément.
 
-Chaque étape doit être historisée afin de permettre un audit de ce process étape par étape et tracer qui à fait quelle action.
+Ces demandes sont instruites par des instructeurs et des superviseurs.
+
+Historique / Audit / Traçabilité
 
 J'ai donc besoin de créer des données pour chacune de ces opérations.
 
-Comme précisé précédemment, on m'a conseillé de mettre en place des fixtures.
-Le projet étant en symfony, je me suis ainsi tourné vers le DoctrineFixtureBundle de Symfony.
+Pour générer tous ces outils, on me parle de fixtures ok c'est quoi
 ====
+
+== Fixtures
+
+[%step]
+[source,php,highlight="1..5|1..3"]
+----
+$toto = new Toto();
+
+$toto->setToto('truc');
+
+assertEquals($toto->getToto(), 'truc');
+----
+
+[NOTE.speaker]
+====
+
+Littérature Objet pour les tests
+
+Dans les tests c'est ca une fixture.
+
+Dans Symfony c'est Doctrine Fixtures dont on m'a parlé
+
+Doctrine === ORM
+====
+
 
 === FixtureBundle
 
-[source,php,%linenums,highlight="1|3..6|8|12..13"]
+[source,php,%linenums,highlight="1..3|7..8|1..10"]
 ----
 class AppFixtures extends Fixture
 {
-    public function getDependencies(): array
-    {
-        return [];
-    }
-
     public function load(ObjectManager $manager): void
     {
         $objet = new Object();
@@ -189,20 +248,37 @@ class AppFixtures extends Fixture
     }
 }
 ----
-
-
 [NOTE.speaker]
 ====
-Permet la création de classe dépendant de fixutre
-Toutes ces classes  du dossier fixutre sont exécutées.
-Get dépendencies permet l'intégration de dépendance entre le fixutres
-Le manager permet d'accéder à l'entity manager et donc accéder à la base de données.
-Dernier mécanisme le register de référence, permettant d'accéder à des objets déjà créés.
+
+* Exécution load des classes fixtures
+* manager = bdd
+* Registre de référence => partage
+
+====
+=== FixtureBundle
+
+[source,php,%linenums,highlight="1|3..6|1..7]
+----
+class AppFixtures extends Fixture implements DependentFixtureInterface
+{
+    public function getDependencies(): array
+    {
+        return [];
+    }
+}
+----
+[NOTE.speaker]
 ====
 
-=== Première étape
+* DependentFixtureInterface
+* getDependencies == ordonnancement
 
-[source, php,%linenums,highlight="1..4|5..8|10..12|13"]
+====
+
+=== Première fixture
+
+[source, php,%linenums,highlight="1..4|5..9|11 ..12|14|1..14"]
 ----
 class AppFixturesBasis extends Fixture
 {
@@ -225,10 +301,13 @@ class AppFixturesBasis extends Fixture
 [NOTE.speaker]
 ====
 
-Ok, nous avons un objet Demandeur, mais un demandeur c'est avant tout un utilisateur de l'application.
-Il doit donc être présent dans ma briqure d'authentification.
-Il faut donc également créer un utilisateur dans dans Keycloak.
-N'a-t-on pas un service qui permet de créer un utilisateur dans l'application ?
+Données -> persistance ->reference
+
+Demandeur != candidat
+demandeur == pas dans keycloak
+
+=> Notion de candidat.
+
 ====
 
 === Créons donc un Candidat.
@@ -261,10 +340,10 @@ Candidate Service :
 * Création d'un historique de création
 ====
 
-=== Avons-nous tout ce qu'il nous faut ?
+=== La notion de périmètre
 
 [%step]
-[source, php,%linenums,highlight="5..7|1..3,9..18"]
+[source, php,%linenums,highlight="1..9|1,9..18"]
 ----
 class GeographicDataFixtures extends Fixture
 {
@@ -289,16 +368,17 @@ class AppFixtures extends Fixture
 
 [NOTE.speaker]
 ====
+On a parlé de demande, et de périmètre d'une demande.
+Elles sont où les données géographiques ?
+
+Heureusement, nous avons une commande qui permet de créer des communes, des départements et des régions.
+
 On a donc un candidat, mais il nous faut également des instructeurs.
-Comme pour les demandeurs, nous avons des services pour créer les instructeurs.
-et nous allons créer des superviseur.
-Sauf que nous avons besoin de données géographiques pour les instructeurs et les superviseurs.
-Heureusement, nous avons un service qui permet de créer des communes, des départements et des régions.
 ====
 
 === Les intervenants
 
-[source,php,%linenums,highlight="1..8|12|13..19|20|1..20"]
+[source,php,%linenums,highlight="1..8|12|13..19|20|21|1..21"]
 ----
 class IntervenantFixtures extends Fixture implements DependentFixtureInterface
 {
@@ -320,6 +400,7 @@ class IntervenantFixtures extends Fixture implements DependentFixtureInterface
                 ->setRoles([Role::ROLE_INSTRUCTEUR->name])
                 ->setPerimetreSupervision((new PerimetreIntervention())->addDepartement($dpt));
             $this->intervenantService->create($instructeur);
+            $this->addReference('INSTRUCTEUR_' . $dpt->getCode(), $instructeur);
         }
     }
 }
@@ -327,10 +408,36 @@ class IntervenantFixtures extends Fixture implements DependentFixtureInterface
 
 [NOTE.speaker]
 ====
+
+Comme pour les demandeurs, nous avons des services pour créer les instructeurs.
+et nous allons créer des superviseur.
+
 * Dépendant géo
 * On parcourt tous les départements, on crée un instructeur par département.
-* On appelle le service pour créer l'instructeur.
+* serviceCreateInstructeur ==  (Keycloak / histo)
+* Stockage de la référence
 * On prendra ensuite un principe similaire en parcours les régions pour créer des superviseurs.
+====
+
+=== Les intervenants
+
+[source,php,%linenums,highlight="1|6,7|1..9"]
+----
+class DemandeFixtures extends Fixture implements DependentFixtureInterface
+{
+    public function getDependencies(): array
+    {
+        return [
+            GeographicDataFixtures::class,
+            IntervenantFixtures::class,
+        ];
+    }
+
+----
+
+[NOTE.speaker]
+====
+Pour les demandes, nous avons besoin d'instructeurs rendons les dépendants.
 ====
 
 === Passons donc aux demandes
@@ -364,10 +471,12 @@ return $this->demandeService->creeDemande($demandeur, $param);
 
 [NOTE.speaker]
 ====
+
 Une demande, c'est beaucoup d'informations, mais dans notre cas ce qui nous intéresse c'est le périmètre de la demande.
-On peut également factoriser notre code pour le demandeur.
+
 Là encore, on pourrait créer tous les objets, mais on a un service qui nous permet cela.
-Encore une fois, on va utiliser le service pour créer notre demande.
+
+Nous utilisons le service pour créer notre demande.
 ====
 
 [.columns]
@@ -386,17 +495,18 @@ image::images/fichier_test.png[fichier,300px]
 
 [NOTE.speaker]
 ====
+
 * Demande === *BEAUCOUP* de fichiers.
 * Fichier === stockage sur disque et pas *que* en bdd
+* Download ?
 
-La complexité est qu'une demande est composée de plusieurs fichiers.
-Et qu'il faut les télécharger sur l'application.
-Le contenu du fichier, on s'en moque un peu, mais il faut qu'il y en ait un pour que par la suite on puisse les manipuler dans l'application.
+Le contenu du fichier, on s'en moque un peu, il faut qu'il y en ait un pour que l'on puisse les manipuler dans l'application.
+
 ====
 
 === La problématique des fichiers
 
-[source,php,%linenums,highlight="1..9|10..14|17..22|16|1..23"]
+[source,php,%linenums,highlight="1..9|16..22|15|10..14|1..24"]
 ----
 public function createUploadedFile(string $nom): UploadedFile
 {
@@ -407,33 +517,41 @@ public function createUploadedFile(string $nom): UploadedFile
 
     return new UploadedFile("/tmp/$nom", $nom, 'application/pdf', test: true);
 }
-
 public function addPjsBrouillon(
-        DemandeAgrement $demande,
-        string $nom,
-        string $codeTypePj,
-    ): PieceJointe {
-        return $this->pieceJointeService->createPieceJointe(
-            new PieceJointeModel(
-                $nom,
-                $this->fixtHelpers->createUploadedFile($nom),
-                $demande,
-                $demande->getDemandeur(),
-            )
-        );
-    }
+    DemandeAgrement $demande,
+    string $nom,
+    string $codeTypePj,
+): PieceJointe {
+    return $this->pieceJointeService->createPieceJointe(
+        new PieceJointeModel(
+            nom: $nom,
+            fichier: $this->fixtHelpers->createUploadedFile($nom),
+            demande: $demande,
+            user: $demande->getDemandeur(),
+            codeTypePj: $codeTypePj
+        )
+    );
+}
 
 ----
 
 [NOTE.speaker]
 ====
+
+Un fichier téléversé, c'est un UploadedFile
+ * dans /tmp avec un nom
+
+* modele PJ
+* appelle service (histo, stockage sur disque, téléchargement ...)
+* Encapsulage dans une fonction
+
 On a donc une fonction qui permet de créer un fichier qui pourra être manipulé par notre application.
-Pour aller plus loin, on va également utiliser le service de l'application pour finaliser la création d'un fichier.
+
 ====
 
 === Demandes & fichiers
 
-[source,php,%linenums,highlight=1..2|4..6]
+[source,php,%linenums]
 ----
 $demande = $this->getReferece('DEMANDE', Demande::class);
 
@@ -444,8 +562,11 @@ foreach (Demande::Procedure as $typePj) {
 
 [NOTE.speaker]
 ====
+
+Demande == beaucoup de fichiers.
+
 L'utilisateur télécharge les fichiers un à un par demande dans le parcours de création.
-Nous connaissons les types de fichiers nécessaire pour une demande.
+Nous connaissons les types de fichiers nécesaires pour une demande.
 Notre demande est donc complète.
 ====
 
@@ -454,10 +575,19 @@ Notre demande est donc complète.
 
 image::images/workflow_mar_complet.svg[workflow,30%]
 
+[NOTE.speaker]
+====
+Ce n'est pas lisible
+====
 
 === Ce n'est que le début de l'histoire
 
 image::images/workflow_mar_simplifie.svg[workflow,100%]
+
+[NOTE.speaker]
+====
+Toujours pas
+====
 
 === Ce n'est que le début de l'histoire
 
@@ -466,11 +596,14 @@ image::images/workflow_mar_start.svg[workflow,100%]
 [NOTE.speaker]
 ====
 
+C'est mieux ?
+
 * Vert => demandeur
 * Orange/Marron => Superviseur
 * Bleu => Instructeur
 
 Brouillon => Déposée => Affectée <=> Incomplete => Complete
+
 ====
 
 === Dépôt d'une demande
@@ -493,6 +626,17 @@ Par contre l'action de déposer une demande va déclencher une série d'événem
 
 image::images/depose_diagram.svg[depose]
 
+[NOTE.speaker]
+====
+
+* validation payload
+* transition
+* bdd
+* histo
+* mail instructeur & demandeur
+
+====
+
 === Demande de complément et réponse
 
 image::images/workflow_mar_start.svg[workflow,100%]
@@ -503,8 +647,8 @@ image::images/workflow_mar_start.svg[workflow,100%]
 ----
 $demande = $this->getReferece('DEMANDE', Demande::class);
 $demandeur = $this->getReferece('DEMANDEUR', Demandeur::class);
-$instructeur = $this->getReferece('INSTRUCTEUR', Intervenant::class);
-$superviseur = $this->getReferece('SUPERVISEUR', Intervenant::class);
+$instructeur = $this->getReferece('INSTRUCTEUR_33', Intervenant::class);
+$superviseur = $this->getReferece('SUPERVISEUR_75', Intervenant::class);
 
 $this->demandeService->affecterDemande(user: $superviseur, demande: $demande, instructeur: $instructeur);
 
@@ -517,6 +661,17 @@ $this->demandeService->donnerComplement(user: $demandeur, demande: $demande);
 
 $this->demandeService->confirmerCompletude(user: $instructeur, demande: $demande);
 ----
+[NOTE.speaker]
+=====
+
+* Récup demandeur & intervenant
+* Affectation Superviseur, instructeur et demande
+* Demande de complément instructeur & commentaire
+* donner complément fichier + action simple
+* confirmer complétude simple instructeur
+
+=====
+
 
 === Et on continue le parcours
 
@@ -524,17 +679,27 @@ image::images/workflow_mar_start.svg[workflow,100%]
 
 [NOTE.speaker]
 ====
-C'est parfait je teste j'arrive à me connecter avec un utilisateur et je confirme que la demande est bien à l'état complet.
-Bon par contre l'historique n'est pas du tout réaliste.
+
+* Données OK
+* Connexion OK
+* fichiers OK
+* Consulation OK
+* Historisque bof
 
 Le demandeur à déposé 25 fichiers, l'instructeur les a contrôlé et a demandé des compléments, le demandeur a répondu et l'instructeur a confirmé la complétude.
 Le tout a 1,3 seconde.
 Pas très réaliste.
 ====
 
-=== Il est temps de voyager
+== Il est temps de voyager
 
 image::images/delorean3.png[delorean]
+
+[NOTE.speaker]
+====
+
+ Ca existe de forcer une date dans Symfony ?
+====
 
 
 === SymfonyClock
@@ -547,6 +712,7 @@ use function Symfony\Component\Clock\now;
 $now = now();
 
 Clock::set(new MockClock("2024-01-01"));
+Clock::set(new NativeClock());
 ----
 
 [NOTE.speaker]
@@ -554,10 +720,10 @@ Clock::set(new MockClock("2024-01-01"));
 SymfonyClock est une librairie qui permet de gérer le temps dans nos tests.
 On peut donc fixer le temps à une date précise. (MockClock) ou utiliser le temps réel (NativeClock).
 
-Avec MockClock on a tout ce qu'il nous faut pour rendre notre cas de test réaliste.
+Avec MockClock, on a tout ce qu'il nous faut pour rendre notre cas de test réaliste.
 ====
 
-=== C'est parti Marty
+=== Figeons le temps
 
 [source,php,%linenums,highlight="1..2|1,4,7,10,13|1..14"]
 ----
@@ -579,27 +745,46 @@ $this->demandeService->donnerComplement(user: $demandeur, demande: $demande);
 
 [NOTE.speaker]
 ====
+
+* 6 juin = affectation
+* 8 juin = demande de complément
+* 16 juin = ajout de fichier
+* 1er juillet = ajout de fichier
+* 22 juillet = donner complément
+
 On peut maintenant fixer le temps pour chaque action.
-En plus de rendre notre test réaliste, cela va nous permettre également d'activer certaines actions.
-Par exemple, il est possible de rejeter une demande si un utilisateur n'a pas répondu dans les 30 jours.
+Réaliste
+
 ====
 
-=== C'est parti Marty
+=== Figeons le temps
 
 [source,php,%linenums,highlight="1..5|7..8|10,11|1..11"]
 ----
-Clock::set(new MockClock("2024-06-01"));
+Clock::set(new MockClock("2024-07-23"));
 $this->demandeService->affecterDemande(user: $superviseur, demande: $demande, instructeur: $instructeur);
 
-Clock::set(new MockClock("2024-06-08"));
+Clock::set(new MockClock("2024-07-31"));
 $this->demandeService->demanderComplément(user: $instructeur, demande: $demande, commentaire: 'Commentaire');
 
-Clock::set(new MockClock("2024-07-09"));
+Clock::set(new MockClock("2024-09-01"));
 $this->demandeCommand->checkDelaiReponse();
 
-Clock::set(new MockClock("2024-07-09"));
+Clock::set(new MockClock("2024-09-02"));
 $this->demandeService->refuserDemande(user: $instructeur, demande: $demande, commentaire: 'Hors délai');
 ----
+
+[NOTE.speaker]
+====
+
+* 23 juillet = affectation
+* 31 juillet = demande de complément
+* 1er septembre = vérification délai
+* 2 septembre = refus de la demande
+
+Sans bidouiller impossilbe
+
+====
 
 [.columns.is-vcentered]
 === En résumé
@@ -634,7 +819,7 @@ Nous avons pu alimenter les données de base (géographique notamment).
 Créer nos intervenants (instruteur, superviseur et admin).
 
 On a un cas de test réaliste avec des utilisateurs qui peuvent se connecter (Demandeur, instructeur, superviseur).
-Nous avons des fichiers que les utilsiateurs peuvent consulter et donc vérifier leur présence.
+Nous avons des fichiers que les utilsateurs peuvent consulter et donc vérifier leur présence.
 On a pu créer nos données de manière cohérente.
 Créer nos demandes
 
@@ -652,11 +837,16 @@ image::images/process2.svg[30%]
 Par contre, on a fait que coder
 Mon besoin principal est de créer des données pour tous les états d'une demande.
 Je ne veux pas avoir à tout écrire à la main.
+Code == TU
 
 Nous allons donc voir comment nous pouvons outiller tout cela.
+
+* Données nécessaires : utilisateurs / données géographiques
+* Parcours fichier : un scénario par demande
+* Mise en place de la gestion de scénario
 ====
 
-=== Ecrivons le scnéario de notre histoire
+=== Ecrivons un scénario
 
 [%step]
 "*John Doe* dépose une demande d'agrément, qui est instruite par un *instructeur* et un *superviseur*."
@@ -673,14 +863,18 @@ Nous allons donc voir comment nous pouvons outiller tout cela.
 [NOTE.speaker]
 ====
 La première étape, c'est de savoir qui fait l'action.
+
 Une information discriminante est également le périmètre de l'agrément.
+
 Et enfin de savoir quand on fait l'action
+
 Par contre il y a beacoup d'information qui ont du sens pour un instructeur mais n'ont pas de sens pour nous.
 ====
 
 === Décrivons cette histoire
 
-[source,%numlines,yaml,highlight="1..23|2,5,7,11,17|18..21|18,19|22,23"]
+[%step]
+[source,%numlines,yaml,highlight="1..23|2,5,7,11,17|18..21|22,23"]
 ----
 demandeur:
   email: "john.doe@test"
@@ -703,16 +897,21 @@ perimetre_intervention:
   departements: [33]
   regions: []
   precisions: ""
-date_modification: "20/01/2023"
-date_creation: "20/01/2023"
+date_creation: "2023-01-20T10:00:00+02:00"
+date_modification: "2023-01-20T12:00:00+02:00"
 ----
 
 [NOTE.speaker]
 ====
+
+Introduire le yaml (facile à lire, facile à écrire, facile à parser)
+
 Nous n'avons besoin que de toutes ces données.
-Certaines données sont importantes mais pour l'instruction pas pour l'application.
+
+Certaines données sont importantes pour l'instruction pas pour noous
 
 Demandeur :
+
 * mail
 * date,
 * qualité
@@ -720,9 +919,9 @@ Demandeur :
 * commune
 ====
 
-=== Juste un pitch
+=== Il manque un pitch
 
-[source,%numlines,yaml,highlight="2..14|1|8..9|1..14"]
+[source,%numlines,yaml,highlight="2..13|1|8..9|1..13"]
 ----
 description: "Mon premier cas de test"
 demandeur:
@@ -734,37 +933,53 @@ societe:
 perimetre_intervention:
   departements: [33]
 qualite: "qualite"
-date_modification: "2023-01-20T10:00:00+02:00"
 date_creation: "2023-01-20T10:00:00+02:00"
+date_modification: "2023-01-20T10:00:00+02:00"
 ----
 
 [NOTE.speaker]
 ====
-On peut par contre ajouter une description histoire de savoir ce que fait le cas de test.
-Même un périmètre d'intervention peut être limité aux données nécessaires.
+
+Scénar faut un pitch
+
+On peut par contre ajouter une description : savoir ce que fait le cas de test.
+
+Même un périmètre d'intervention peut être limité aux données nécessaires. absence == tableau vide
 
 ====
 
-=== Créons une fonction générique
+=== Traitons notre scénario
 
-[source, php]
+[source, php,%numlines,highlight="1..4|6..8|10..14"]
 ----
-$demandeConfig = $this->demandeFixturesService->checkAndPopulateConfig($file->getRealPath());
-$description = isset($demandeConfig['description']) ? "\n  - {$demandeConfig['description']}" : '';
+$demandeConfig = Yaml::parseFile($file->getRealPath());
+$description = "\n  - {$demandeConfig['description']}" : '';
 $user = "\n  - Demandeur : {$demandeConfig['demandeur']['email']}";
 $this->io->info("Traitement fichier : {$file->getFilename()} $user $description ");
 
+Clock::set((new MockClock($demandeConfig['demandeur']['date_creation']))->withTimeZone('Europe/Paris'));
 $demandeur = $this->demandeurFixturesService->createDemandeur($demandeConfig);
 $this->setReference('DEMANDEUR', $demandeur);
 
+Clock::set((new MockClock($demandeConfig['date_creation']))->withTimeZone('Europe/Paris'));
 $demande = $this->demandeFixturesService->createDemande($demandeConfig, $demandeur);
-Clock::set((new MockClock($demandeConfig['date_modification']))->withTimeZone('Europe/Paris'));
 
+Clock::set((new MockClock($demandeConfig['date_modification']))->withTimeZone('Europe/Paris'));
 $this->demandeFixturesService->completeDemande($demande);
 ----
 
+[NOTE.speaker]
+====
 
-=== Et pour les actions
+* Récupération et affichage de ce que l'on fait description et demandeur.
+* Création demandeur & stockage de la référence Mettre l'attention sur la référence
+* Création de la demande on a un service pour ajouter les données par défaut, mais sinon on utilise l'appli
+* L'étape de completude sert à ajouter tous les fichiers nécessaires à la demande.
+
+====
+
+
+=== Action!
 
 [source.yaml,%numlines,highlight="1|2..5|6..9|10,11|6..11|13..17|19..23,25..27"]
 ----
@@ -794,7 +1009,7 @@ actions:
   -
     user: DEMANDEUR
     action: DONNER_COMPLEMENT
-    date: '2024-01-25T10:00:00+02:00'
+    date: '2024-01-25T10:15   :00+02:00'
 ----
 
 [NOTE.speaker]
@@ -805,9 +1020,26 @@ actions:
 * Demande de complément
 * Ajout de fichier & donner complément
 
-* Il ne reste plus qu'à parcourir les actions.
 ====
 
+=== Gestion des actions
+
+[source,php,%numlines,highlight="1..3|4..9|1..11"]
+----
+public function parcoursAction(array $demandeConfig, Demande $demande): void
+{
+    foreach ($demandeConfig['actions'] as $action) {
+        $user = $action['user'];
+        match ($action['action']) {
+            'depose' => $this->demandeService->depose($user, $demande),
+            'affecte' => $this->demandeService->affecte($user, $demande, $action['payload']),
+            'complete' => $this->demandeService->complete($user, $demande),
+        };
+    }
+}
+----
+
+[%notitle]
 === Schéma
 
 image::images/process.svg[process,70%]
@@ -817,18 +1049,220 @@ image::images/process.svg[process,70%]
 Nous pouvons donc simplement écrire des scénarios pour tous les états d'une demande.
 ====
 
-=== L'environnement d'intégration est tombé...
+=== Détails d'un scénario.
+
+image::images/process_final.svg[process_final,70%]
 
 [NOTE.speaker]
 ====
-Suite à un souci de persistence d'un container en environnement d'intégration, nous avons perdu toutes les données.
-Attention aux `docker prune` abusifs.
-Le mécanisme est inscrit dans l'application, rien n'empêche de l'utiliser sur d'autres environnements.
-C'est tout naturellement que nous avons décidé de l'utiliser en environnement d'intégration.
+* Contrôle des données
+* L'application sait quand c'est faux.
+* Création d'un scénario par défaut
 ====
 
 
+[%notitle]
+=== scenario_par_defaut
+
+[source,yaml,%numlines,highlight="1..28|1,3,6,15,21,23..28"]
+----
+description: '<a_modifier>'
+demandeur:
+  email: "<a_modifier>"
+  prenom: "Prénom Test"
+  nom: "Nom Test"
+  date_creation: "<a_modifier>"
+  telephone: "+33612345678"
+signataire:
+  nom: "Nom Signataire"
+  prenom: "Prénom Signataire"
+  qualite: "signataireQuality"
+societe:
+  nom_societe: "MaSociete ÔSiren"
+  email: "company@boite.mail"
+  siren: "<a_modifier>"
+  telephone: "+33612345678"
+  forme_juridique: "autres"
+adresse:
+  adresse1: "numéro, nom de la voie"
+  adresse2: "complément adresse"
+  commune: "<a_modifier>"
+perimetre_intervention:
+  departements: "<a_modifier>"
+  regions: "<a_modifier>"
+  precisions: "<a_modifier>"
+qualite: "<a_modifier>"
+date_modification: "<a_modifier>"
+date_creation: "<a_modifier>"
+----
+
+[NOTE.speaker]
+====
+
+* Valider les données obligatoires absence = erreur
+* Remplir les données non saisies
+
+====
+
+== Et si on allait encore plus loin
+
+[NOTE.speaker]
+====
+Et oui, j'ai prévenu nous voulons être beyond.
+
+====
+
+=== Et les mots de passes...
+
+[%step]
+
+**1A**john.doe@test
+
+[NOTE.speaker]
+====
+
+Keycloak mail == mail il aime pas
+
+On a donc choisi 1A+mail
+====
+
+=== Une nouvelle action ?
+
+
+[NOTE.speaker]
+====
+
+Nous invoke, rien à faire,
+
+Au pire il faut juste gérer l'aiguillage vers le service.
+
+====
+
+=== Ça ne fait pas le café, mais presque !
+
+[NOTE.speaker]
+====
+On a donc un outil qui nous permet de générer des données pour tous les états d'une demande.
+
+Pas direct, on a suivi un parcours.
+
+On a ajouté des cas de tests supplémentaires.
+
+Context pour les tests, Mais le contexte est partiellement testé.
+
+====
+
+
+=== On a perdu la recette
+
+[NOTE.speaker]
+====
+
+La base de données à été effacée
+6 mois de cas de tests perdus
+
+Ce n'est pas que pour la dev,
+====
+
+=== Un film, on en fait la promo.
+
+|===
+|Demandeur | Superviseur | Instructeur | Périmètre | etat | Fichier de fixtures
+
+| cas-1@test | superviseur_75@test | instructeur_24@test | Dordogne | agree | scenario_1.yml
+| cas-2@test | superviseur_75@test | instructeur_33@test | Nouvelle-Aquitaine, Occitanie | refuse | scenario_2.yml
+| cas-3@test | superviseur_75@test | instructeur_33@test | Nouvelle-Aquitaine, Occitanie | incomplete | scenario_3.yml
+| cas-4@test | superviseur_75@test |  | Landes, Lot & Garonne, Hautes-Pyrénées, Pyrénées Atlantiques | deposee | scenario_4.yml
+|===
+
+[soure,asciidoc]
+----
+|===
+|Demandeur | Superviseur | Instructeur | Périmètre | etat | Fichier de fixtures
+
+| cas-1@test | superviseur_75@test | instructeur_24@test | Dordogne | agree | scenario_1.yml
+|===
+----
+
+[NOTE.speaker]
+====
+
+On a des descriptions et des informations discriminates sur un scénario.
+
+Générons la documentation, si ca reste dans le code personne ne l'utilise.
+
+Gitlab pages, confluence ou autre
+
+C'est de AsciiDoc et les informations ont les a dans les fichiers yaml
+
+====
+
+=== Vers une histoire collaborative.
+
+image::images/scenrio_a_plusieurs.png[scenario,45%]
+
+[NOTE.speaker]
+====
+
+* Un cas à reproduire en prod
+* Du contexte pour les testeurs
+* Des scénarios pour les tests auto
+* Contexte = données prédictibles pain béni pour les tests.
+
+Comme on a fait une bonne promo tout le monde veut en faire.
+
+Oui, c'est généré par IA il y a des pieds à la place des mains
+des gens très souples
+
+====
+
 == Conclusion
 
-[NOTE]
+[NOTE.speaker]
+====
+
+Doctrine n'existe pas ? Créez le principe. Une commande, un registre et zou.
+
+Un peu de code au début pour écrire un scénario, mais on peut commencer petit
+
+* testeurs
+* développeurs
+* product owner
+
+Vos collègues vont vous aimer.
+
+====
+
+[.columns.is-vcentered]
 == Merci
+
+[.column]
+--
+Slides
+
+image::images/qrcode-slides.svg[slides,300px]
+--
+
+[.column]
+--
+Nicolas guérinet
+
+image::images/avatar.png[nico,200px]
+--
+
+[.column]
+--
+
+Feedback
+
+image::images/qrcode_openfeedback_so_days.svg[openfeedback,300px]
+--
+
+[NOTE.speaker]
+====
+J'espère que cette présentation vous aura plus.
+
+* lien slide
+* lien feedback
+
+====
