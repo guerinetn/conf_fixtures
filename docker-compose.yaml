@@ -1,0 +1,10 @@
+services:
+  conf-fix:
+    image: conf-fixtures
+    build: .
+    volumes:
+      - ./slides/images:/usr/share/nginx/html/images/:ro
+      - ./slides/css:/usr/share/nginx/html/css/:ro
+      - ./slides/index.html:/usr/share/nginx/html/index.html:ro
+    ports:
+      - "8080:80"

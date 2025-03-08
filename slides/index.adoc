@@ -4,7 +4,9 @@
 :revealjs_slideNumber: true
 :revealjs_history: true
 :revealjs_pdfseparatefragments: false
-:source-highlighter: highlight.js
+:source-highlighter: highlightjs
+// :highlightjsdir: js
+:highlightjs-languages: php, yaml
 :revealjs_width: 1280
 :customcss: css/custom.css
 :toc:
@@ -156,6 +158,7 @@ Le projet sur lequel nous travaillons est une application web composée de 3 bri
 Mailpit, on ne prend pas de dump de prod ce n'est pas pour enovoyer des mails
 ====
 
+[%notitle]
 === Contexte
 
 image::images/workflow_mar_complet.png[workflow,30%]
@@ -235,7 +238,7 @@ Doctrine === ORM
 
 === FixtureBundle
 
-[source,php,%linenums,highlight="1..3|7..8|1..10"]
+[source,php,highlight="1..3|7..8|1..10"]
 ----
 class AppFixtures extends Fixture
 {
@@ -251,14 +254,16 @@ class AppFixtures extends Fixture
 [NOTE.speaker]
 ====
 
+* MANAGER = *bdd*
+
 * Exécution load des classes fixtures
-* manager = bdd
+
 * Registre de référence => partage
 
 ====
 === FixtureBundle
 
-[source,php,%linenums,highlight="1|3..6|1..7]
+[source,php,highlight="1|3..6|1..7]
 ----
 class AppFixtures extends Fixture implements DependentFixtureInterface
 {
@@ -378,7 +383,7 @@ On a donc un candidat, mais il nous faut également des instructeurs.
 
 === Les intervenants
 
-[source,php,%linenums,highlight="1..8|12|13..19|20|21|1..21"]
+[source,php,highlight="1..8|12|13..19|20|21|1..21"]
 ----
 class IntervenantFixtures extends Fixture implements DependentFixtureInterface
 {
@@ -504,6 +509,7 @@ Le contenu du fichier, on s'en moque un peu, il faut qu'il y en ait un pour que 
 
 ====
 
+[%notitle]
 === La problématique des fichiers
 
 [source,php,%linenums,highlight="1..9|16..22|15|10..14|1..24"]
@@ -551,12 +557,16 @@ On a donc une fonction qui permet de créer un fichier qui pourra être manipul�
 
 === Demandes & fichiers
 
-[source,php,%linenums]
+[source,php,highlight="1,3|4..8|1..8"]
 ----
 $demande = $this->getReferece('DEMANDE', Demande::class);
 
 foreach (Demande::Procedure as $typePj) {
-    $this->fixtureService->addPjsBrouillon($demande, "test_{$type}.pdf", $typePj->code());
+    $this->fixtureService->addPjsBrouillon(
+        demande: $demande,
+        nom: "test_{$type}.pdf",
+        codeTypePj: $typePj->code()
+    );
 }
 ----
 
@@ -589,6 +599,7 @@ image::images/workflow_mar_simplifie.svg[workflow,100%]
 Toujours pas
 ====
 
+[%notitle]
 === Ce n'est que le début de l'histoire
 
 image::images/workflow_mar_start.svg[workflow,100%]
@@ -639,11 +650,11 @@ image::images/depose_diagram.svg[depose]
 
 === Demande de complément et réponse
 
-image::images/workflow_mar_start.svg[workflow,100%]
+image::images/workflow_mar_start_depose.svg[workflow,100%]
 
 === Et on continue le parcours
 
-[source,php,%linenums,highlight="1..4|6|8|10..13|15|1..15"]
+[source,php,%linenums,highlight="1..4|6|8|10..12|14|1..14"]
 ----
 $demande = $this->getReferece('DEMANDE', Demande::class);
 $demandeur = $this->getReferece('DEMANDEUR', Demandeur::class);
@@ -656,7 +667,6 @@ $this->demandeService->demanderComplément(user: $instructeur, demande: $demande
 
 $this->demandeService->addPjsBrouillon($demande, "complement1.pdf", "complement");
 $this->demandeService->addPjsBrouillon($demande, "complement2.pdf", "complement");
-
 $this->demandeService->donnerComplement(user: $demandeur, demande: $demande);
 
 $this->demandeService->confirmerCompletude(user: $instructeur, demande: $demande);
@@ -673,9 +683,9 @@ $this->demandeService->confirmerCompletude(user: $instructeur, demande: $demande
 =====
 
 
-=== Et on continue le parcours
+=== La demande est complète.
 
-image::images/workflow_mar_start.svg[workflow,100%]
+image::images/workflow_mar_start_complete.svg[workflow,100%]
 
 [NOTE.speaker]
 ====
@@ -704,11 +714,11 @@ image::images/delorean3.png[delorean]
 
 === SymfonyClock
 
-[source, php]
+[source, php,highlight="1..7|3,4|6|7"]
 ----
 use function Symfony\Component\Clock\now;
 
-// Get the current time as a DatePoint instance
+/* Get the current time as a DatePoint instance */
 $now = now();
 
 Clock::set(new MockClock("2024-01-01"));
@@ -874,7 +884,7 @@ Par contre il y a beacoup d'information qui ont du sens pour un instructeur mais
 === Décrivons cette histoire
 
 [%step]
-[source,%numlines,yaml,highlight="1..23|2,5,7,11,17|18..21|22,23"]
+[source,yaml,highlight="1..23|2,5,7,11,17|18..21|22,23"]
 ----
 demandeur:
   email: "john.doe@test"
@@ -957,14 +967,14 @@ $description = "\n  - {$demandeConfig['description']}" : '';
 $user = "\n  - Demandeur : {$demandeConfig['demandeur']['email']}";
 $this->io->info("Traitement fichier : {$file->getFilename()} $user $description ");
 
-Clock::set((new MockClock($demandeConfig['demandeur']['date_creation']))->withTimeZone('Europe/Paris'));
+Clock::set((new MockClock($demandeConfig['demandeur']['date_creation'])));
 $demandeur = $this->demandeurFixturesService->createDemandeur($demandeConfig);
 $this->setReference('DEMANDEUR', $demandeur);
 
-Clock::set((new MockClock($demandeConfig['date_creation']))->withTimeZone('Europe/Paris'));
+Clock::set((new MockClock($demandeConfig['date_creation'])));
 $demande = $this->demandeFixturesService->createDemande($demandeConfig, $demandeur);
 
-Clock::set((new MockClock($demandeConfig['date_modification']))->withTimeZone('Europe/Paris'));
+Clock::set((new MockClock($demandeConfig['date_modification'])));
 $this->demandeFixturesService->completeDemande($demande);
 ----
 
@@ -978,7 +988,7 @@ $this->demandeFixturesService->completeDemande($demande);
 
 ====
 
-
+[%notitle]
 === Action!
 
 [source.yaml,%numlines,highlight="1|2..5|6..9|10,11|6..11|13..17|19..23,25..27"]
@@ -1040,18 +1050,19 @@ public function parcoursAction(array $demandeConfig, Demande $demande): void
 ----
 
 [%notitle]
-=== Schéma
+=== Schema
 
-image::images/process.svg[process,70%]
+image::images/process.svg[process,90%]
 
 [NOTE.speaker]
 ====
 Nous pouvons donc simplement écrire des scénarios pour tous les états d'une demande.
 ====
 
-=== Détails d'un scénario.
+[%notitle]
+=== Gestion scénario
 
-image::images/process_final.svg[process_final,70%]
+image::images/process_final.svg[process_final,85%]
 
 [NOTE.speaker]
 ====
@@ -1142,13 +1153,11 @@ Au pire il faut juste gérer l'aiguillage vers le service.
 
 [NOTE.speaker]
 ====
-On a donc un outil qui nous permet de générer des données pour tous les états d'une demande.
 
-Pas direct, on a suivi un parcours.
-
-On a ajouté des cas de tests supplémentaires.
-
-Context pour les tests, Mais le contexte est partiellement testé.
+* ça Teste
+* Objets évolue
+* Context pour les tests
+* Contexte est partiellement testé.
 
 ====
 

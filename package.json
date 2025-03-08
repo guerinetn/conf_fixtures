@@ -1,27 +1,11 @@
 {
-  "devDependencies": {
-    "@asciidoctor/reveal.js": "4.1.0",
-    "asciidoctor": "^2.2.6",
-    "browser-sync": "^2.23.6",
-    "del": "^3.0.0",
-    "gulp": "^4.0.2",
-    "gulp-exec": "^3.0.2",
-    "gulp-ext-replace": "^0.3.0",
-    "gulp-load-plugins": "^1.5.0",
-    "gulp-sequence": "^1.0.0",
-    "gulp-tap": "^1.0.1",
-    "map-stream": "^0.0.7",
-    "mermaid.cli": "^0.5.1",
-    "opal": "^0.6.4"
+  "dependencies": {
+    "@asciidoctor/reveal.js": "^5.2.0",
+    "asciidoctor": "^3.0.4",
+    "highlight.js": "^11.11.1"
   },
   "scripts": {
-    "slides": "./node_modules/.bin/gulp",
-    "build": "npm run slides",
-    "start": "cd /appli/perso/conf_fixtures/site-vel && docker compose up -d && npm run serve",
-    "serve": "./node_modules/.bin/gulp serve",
-    "gen:doc:workflow": "cd /appli/perso/conf_fixtures/site-vel && bash runCmd.sh php bin/console app:DumpWorkflow > workflow.mmd && docker run --rm -u `id -u`:`id -g` -v ./:/data minlag/mermaid-cli -i workflow.mmd -o test.png && mv test.png ../slides/images/workflow.png && rm workflow.mmd",
-    "gen:doc:diagram-bdd" : "cd /appli/perso/conf_fixtures/site-vel && bash runCmd.sh php bin/console doctrine:diagram && cd code && mv database.svg ../../slides/images/database.svg",
-    "backend":"cd /appli/perso/conf_fixtures/site-vel && bash runCmd.sh"
+    "build": "npx asciidoctor-revealjs slides/index.adoc",
+    "start": "docker run --name nginx-conf-fixture -v ./slides:/usr/share/nginx/html:ro -d nginx"
   }
 }
-

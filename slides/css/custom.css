@@ -1,6 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins");
 
-
 :root {
     /*--r-background-color: #F1EDE3;*/
     /*--r-main-color: #111012;*/
@@ -52,54 +51,157 @@ body:after {
         }
     }
 
-    code {
-        font-size: 18px;
-        line-height: normal;
+    .code-wrapper {
+        code {
+            max-height: unset;
+
+            .language-yaml {
+                font-size: 18px;
+            }
+
+            .language-php {
+                line-height: normal;
+            }
+        }
     }
 
-    code.language-yaml {
-        font-size: smaller;
+    #_fixtures, #_fixturebundle, #_fixturebundle_2, #_symfonyclock {
+        .code-wrapper {
+            code {
+                font-size: 28px;
+                line-height: normal;
+            }
+        }
     }
 
-    code.language-php {
-        max-height: 500px;
-        line-height: normal;
+    #_première_fixture, #_créons_donc_un_candidat, #_la_notion_de_périmètre, #_les_intervenants_2 {
+        code {
+            font-size: 24px;
+            line-height: normal;
+        }
+    }
+
+    #_les_intervenants {
+        code {
+            font-size: 20px;
+            line-height: normal;
+        }
+    }
+
+    #_passons_donc_aux_demandes {
+        .code-wrapper {
+            width: 95%;
+
+            code {
+                font-size: 20px;
+                line-height: normal;
+            }
+        }
+    }
+
+    #_demandes_fichiers {
+        .code-wrapper {
+            code {
+                font-size: 28px;
+                line-height: normal;
+            }
+        }
+    }
+
+    #_ce_nest_que_le_début_de_lhistoire_3 {
+        img {
+            max-width: 100%;
+        }
+    }
+    #_dépôt_dune_demande {
+        .code-wrapper {
+            code {
+                font-size: 28px;
+                line-height: normal;
+            }
+        }
+    }
+
+    #_et_on_continue_le_parcours {
+        .code-wrapper {
+            width: 100%;
+        }
+
+        code {
+            font-size: 20px;
+        }
+    }
+
+    #_figeons_le_temps, #_figeons_le_temps_2 {
+        .code-wrapper {
+            width: 100%;
+
+            code {
+                font-size: 20px;
+            }
+        }
     }
 
     #_ne_le_ferions_nous_pas_déjà_4 code.language-php {
         max-height: 530px;
     }
 
-    #_un_film_on_en_fait_la_promo{
-        table {
-            font-size: 14px;
+    #_décrivons_cette_histoire {
+        code {
+            line-height: normal;
         }
-    }
-    #_workflow {
-        top: -30px !important;
-    }
-    #_décrivons_cette_histoire ,#_action{
-        code{
-            max-height: unset;
-        }
-    }
-    #_scenario_par_defaut code.language-yaml {
-        max-height: 600px;
-    }
-    #_merci {
-        font-size: larger;
     }
 
-    #_le_parcours_de_monsieur_client {
-        li {
-            font-size: smaller;
+    #_action {
+        code {
+            font-size: 20px;
+            line-height: normal;
         }
     }
-    #_un_film_on_en_fait_la_promo{
+
+    #_gestion_des_actions {
+        .code-wrapper {
+            width: 95%;
+        }
+    }
+
+    #_schema, #_gestion_scénario {
+        top: 0 !important;
+    }
+
+    #_scenario_par_defaut {
+        top: 0 !important;
+
+        code.language-yaml {
+            font-size: 20px;
+            line-height: normal;
+        }
+    }
+
+    #_un_film_on_en_fait_la_promo {
         .content pre {
             font-size: 18px;
             line-height: normal;
         }
+
+        table {
+            thead {
+                font-size: 20px;
+                background-color: #029edf;
+            }
+
+            tbody {
+                tr:nth-child(even) {
+                    background-color: #ddd;
+                }
+            }
+
+            font-size: 15px;
+        }
+    }
+
+    #_merci {
+        font-size: larger;
     }
 }
 

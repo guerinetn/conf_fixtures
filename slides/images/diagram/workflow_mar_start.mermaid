@@ -1,13 +1,17 @@
 graph LR
-    place0{"brouillon"}
-    style place0 fill:#359A58,color:white,stroke-width:1px,stroke:black
+        place0{"brouillon"}
+        style place0 fill:#359A58,color:white,stroke-width:1px,stroke:black
+    style one fill:none,stroke-width:8px,stroke:red;
     place1("deposee")
     style place1 fill:#9A5713,color:white,stroke-width:1px,stroke:black
+
     place2("affectee")
     style place2 fill:#25729A,color:white,stroke-width:1px,stroke:black
     place3{{"incomplete"}}
     style place3 fill:#359A58,color:white,stroke-width:1px,stroke:black
+    subgraph one[" "]
     place10("complete")
+    end
     style place10 fill:#25729A,color:white,stroke-width:1px,stroke:black
     place0-.->|"deposer"|place1
     linkStyle 0 stroke:#359A58,color:#359A58
