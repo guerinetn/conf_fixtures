@@ -1,0 +1,69 @@
+== La stack technique
+
+image::images/intro/stack_appli.png[stack]
+
+[NOTE.speaker]
+====
+
+Je vous ai dit que l'on était sur un retour d'expérience, posons donc le contexte.
+
+Le projet sur lequel nous travaillons est une application web composée de 3 briques.
+* Un backend PHP,
+* un front en angular
+* une brique d'authentification avec KeyCloak.
+
+Mailpit, on ne prend pas de dump de prod ce n'est pas pour enovoyer des mails
+====
+
+[%notitle]
+=== Contexte
+
+image::images/workflow_mar_complet.png[workflow,30%]
+
+[NOTE.speaker]
+====
+Cette application gère des demandes d'agrément.
+
+Ne cherchez pas à lire, il n'y a rien de marqué.
+
+Une demande a un cycle de vie complexe, nous avons besoin de mettre en place des jeux de données pour chaque état.
+
+Demande => ajout de fichier => deposer la demande => instruire
+
+====
+
+=== Demandes & utilisateurs
+
+* Demandeur
+* Demande
+* Intervenant
+
+[NOTE.speaker]
+====
+
+Demande == Dossier d'information
+
+* l'identité de notre demandeur,
+* Qualif / société.
+* Fichiers
+* Périmètre d'intervention
+
+====
+
+=== l'instruction
+
+image::images/intro/instrution2.png[instruction,40%]
+
+[NOTE.speaker]
+====
+
+Une fois un dossier constitué un demandeur va déposer son dossier.
+
+Ces demandes sont instruites par des instructeurs et des superviseurs.
+
+Historique / Audit / Traçabilité
+
+J'ai donc besoin de créer des données pour chacune de ces opérations.
+
+Pour générer tous ces outils, on me parle de fixtures ok c'est quoi
+====

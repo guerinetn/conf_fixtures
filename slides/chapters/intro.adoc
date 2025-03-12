@@ -1,0 +1,98 @@
+== Quand vous arrivez sur un projet...
+
+[NOTE.speaker]
+====
+Je ne sais pas pour vous, mais en général, pour moi, quand je commence à travailler sur un projet existant.
+
+Cela commence par cela.
+====
+
+[.columns]
+
+=== L'installation ...
+
+
+[.column]
+--
+image::images/intro/readme.png[readme,100px]
+--
+[.column]
+--
+image::images/intro/git.png[git,100px]
+--
+
+[step=1]
+[.column]
+--
+image::images/intro/npm.png[npm,100px]
+--
+
+[step=1]
+[.column]
+--
+image::images/intro/logo-composer-transparent.png[composer,100px]
+--
+
+[step=2]
+[.column]
+--
+image::images/intro/docker-compose.png[docker,100px]
+--
+
+[step=2]
+[.column]
+--
+image::images/intro/doctrine-logo.svg[doctrine,100px]
+--
+
+[NOTE.speaker]
+====
+* Je lis le readme, oui oui, c'est intéressant à lire, bon ok pas tout, mais au moins les étapes d'installation.
+* Je récupère les sources,
+* J'installe les dépendances,
+* Je lance les containers ou configure nos briques techniques.
+* J'initialise le schéma de base de données et je lance mes migrations
+* Et je suis prêt à travailler, enfin presque.
+
+====
+
+[.columns]
+=== Et les données ?
+
+[.column]
+--
+[step=1]
+image::images/intro/task.png[task,300px]
+--
+
+[.column]
+--
+[step=2]
+image::images/intro/old_hdd.png[task,300px]
+--
+
+[.column]
+--
+[step=4]
+image::images/intro/404.png[404,600px]
+--
+
+[.column]
+--
+[step=3]
+image::images/intro/dump_prod.png[dump,300px]
+--
+
+[NOTE.speaker]
+====
+
+* Intressant le readme,  procédure d'init  en 300 étapes (ou presque).
+* le vieux dump qui traine dans un coin
+*  le  dump de PROD (anonymisé bien sûr)
+* pas de procédure d'anonymisation / ni procédure capilotractée /rien
+
+Pas envie de tout faire à la main, j'ai commencé à essayer de trouver une solution.
+Apparemment, fixtures.
+
+Suite REX sur la mise en place de fixtures au sein de mon projet.
+====

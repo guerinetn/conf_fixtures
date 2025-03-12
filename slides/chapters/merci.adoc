@@ -1,0 +1,31 @@
+[.columns.is-vcentered]
+== Merci
+
+[.column]
+--
+Slides
+
+image::images/qrcode-slides.svg[slides,300px]
+--
+
+[.column]
+--
+Nicolas guérinet
+
+image::images/avatar.png[nico,200px]
+--
+
+[.column]
+--
+
+Feedback
+
+image::images/qrcode_openfeedback_so_days.svg[openfeedback,300px]
+--
+
+[NOTE.speaker]
+====
+J'espère que cette présentation vous aura plus.
+
+* lien slide
+* lien feedback

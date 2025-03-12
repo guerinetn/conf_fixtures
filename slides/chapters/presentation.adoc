@@ -1,0 +1,22 @@
+[.columns]
+== Qui suis-je ?
+
+[.column]
+--
+image::images/avatar.png[nico,80%]
+--
+
+[.column.has-text-left]
+--
+**Nicolas**
+
+Développeur PHP, Symfony
+
+TechLead, Architecte
+--
+
+[.column]
+--
+image::images/gop-mini.png[gop,80px,float="left"]
+onepoint BDX
+--

@@ -1,0 +1,109 @@
+== Et si on allait encore plus loin
+
+[NOTE.speaker]
+====
+Et oui, j'ai prévenu nous voulons être beyond.
+
+====
+
+=== Et les mots de passes...
+
+[%step]
+
+**1A**john.doe@test
+
+[NOTE.speaker]
+====
+
+Keycloak mail == mail il aime pas
+
+On a donc choisi 1A+mail
+====
+
+=== Une nouvelle action ?
+
+
+[NOTE.speaker]
+====
+
+Nous dispatch d'évenemment, rien à faire,
+
+Au pire il faut juste gérer l'aiguillage vers le service.
+
+====
+
+=== Ça ne fait pas le café, mais presque !
+
+[NOTE.speaker]
+====
+
+* ça Teste
+* Objets évolue
+* Context pour les tests
+* Contexte est partiellement testé.
+
+====
+
+
+=== On a perdu la recette
+
+[NOTE.speaker]
+====
+
+La base de données à été effacée
+6 mois de cas de tests perdus
+
+Ce n'est pas que pour la dev,
+====
+
+=== Un film, on en fait la promo.
+
+|===
+|Demandeur | Superviseur | Instructeur | Périmètre | etat | Fichier de fixtures
+
+| cas-1@test | superviseur_75@test | instructeur_24@test | Dordogne | agree | scenario_1.yml
+| cas-2@test | superviseur_75@test | instructeur_33@test | Nouvelle-Aquitaine, Occitanie | refuse | scenario_2.yml
+| cas-3@test | superviseur_75@test | instructeur_33@test | Nouvelle-Aquitaine, Occitanie | incomplete | scenario_3.yml
+| cas-4@test | superviseur_75@test |  | Landes, Lot & Garonne, Hautes-Pyrénées, Pyrénées Atlantiques | deposee | scenario_4.yml
+|===
+
+[soure,asciidoc]
+----
+|===
+|Demandeur | Superviseur | Instructeur | Périmètre | etat | Fichier de fixtures
+
+| cas-1@test | superviseur_75@test | instructeur_24@test | Dordogne | agree | scenario_1.yml
+|===
+----
+
+[NOTE.speaker]
+====
+
+On a des descriptions et des informations discriminates sur un scénario.
+
+Générons la documentation, si ca reste dans le code personne ne l'utilise.
+
+Gitlab pages, confluence ou autre
+
+C'est de AsciiDoc et les informations ont les a dans les fichiers yaml
+
+====
+
+=== Vers une histoire collaborative.
+
+image::images/scenrio_a_plusieurs.png[scenario,45%]
+
+[NOTE.speaker]
+====
+
+* Un cas à reproduire en prod
+* Du contexte pour les testeurs
+* Des scénarios pour les tests auto
+* Contexte = données prédictibles pain béni pour les tests.
+
+Comme on a fait une bonne promo tout le monde veut en faire.
+
+Oui, c'est généré par IA il y a des pieds à la place des mains
+des gens très souples
+
+====

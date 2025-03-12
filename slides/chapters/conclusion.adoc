@@ -1,0 +1,16 @@
+== Conclusion
+
+[NOTE.speaker]
+====
+
+Doctrine n'existe pas ? Créez le principe. Une commande, un registre et zou.
+
+Un peu de code au début pour écrire un scénario, mais on peut commencer petit
+
+* testeurs
+* développeurs
+* product owner
+
+Vos collègues vont vous aimer.
+
+====
