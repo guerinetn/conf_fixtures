@@ -6,6 +6,6 @@
   },
   "scripts": {
     "build": "npx asciidoctor-revealjs slides/index.adoc",
-    "start": "docker run --name nginx-conf-fixture -v ./slides:/usr/share/nginx/html:ro -d nginx"
+    "start": "docker compose up -d"
   }
 }

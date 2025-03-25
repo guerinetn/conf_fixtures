@@ -19,22 +19,22 @@ Aujourd'hui, je vais vous parler de fixtures mais pas que, et si on allait au-de
 
 ====
 
-include::chapters/intro.adoc[]
+include::intro.adoc[]
 
-include::chapters/presentation.adoc[]
+include::presentation.adoc[]
 
-include::chapters/projet.adoc[]
+include::projet.adoc[]
 
-include::chapters/fixtures.adoc[]
+include::fixtures.adoc[]
 
-include::chapters/time.adoc[]
+include::time.adoc[]
 
-include::chapters/outils.adoc[]
+include::outils.adoc[]
 
-include::chapters/beyond.adoc[]
+include::beyond.adoc[]
 
-include::chapters/conclusion.adoc[]
+include::conclusion.adoc[]
 
-include::chapters/merci.adoc[]
+include::merci.adoc[]
 
 ====

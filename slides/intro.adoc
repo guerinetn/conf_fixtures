@@ -47,12 +47,12 @@ image::images/intro/doctrine-logo.svg[doctrine,100px]
 
 [NOTE.speaker]
 ====
-* Je lis le readme, oui oui, c'est intéressant à lire, bon ok pas tout, mais au moins les étapes d'installation.
-* Je récupère les sources,
-* J'installe les dépendances,
-* Je lance les containers ou configure nos briques techniques.
-* J'initialise le schéma de base de données et je lance mes migrations
-* Et je suis prêt à travailler, enfin presque.
+
+* Readme, interressant sur l'install
+* Git, je clone le projet
+* dépendances back et front
+* init bdd & migration
+* let's go
 
 ====
 
@@ -86,13 +86,12 @@ image::images/intro/dump_prod.png[dump,300px]
 [NOTE.speaker]
 ====
 
-* Intressant le readme,  procédure d'init  en 300 étapes (ou presque).
-* le vieux dump qui traine dans un coin
-*  le  dump de PROD (anonymisé bien sûr)
-* pas de procédure d'anonymisation / ni procédure capilotractée /rien
+* Readme init / proc install longue
+* vieux dump
+* prod anonymisée ^^
+* RIEN
 
-Pas envie de tout faire à la main, j'ai commencé à essayer de trouver une solution.
-Apparemment, fixtures.
+Flemme de faire à la main, solution apparemment fixtures.
 
-Suite REX sur la mise en place de fixtures au sein de mon projet.
+Rex sur le projet
 ====

@@ -5,14 +5,14 @@ image::images/intro/stack_appli.png[stack]
 [NOTE.speaker]
 ====
 
-Je vous ai dit que l'on était sur un retour d'expérience, posons donc le contexte.
+REX === contexte
 
 Le projet sur lequel nous travaillons est une application web composée de 3 briques.
-* Un backend PHP,
-* un front en angular
-* une brique d'authentification avec KeyCloak.
 
-Mailpit, on ne prend pas de dump de prod ce n'est pas pour enovoyer des mails
+Backend / Frontend / Authentification
+
+Mailpit
+
 ====
 
 [%notitle]
@@ -22,32 +22,21 @@ image::images/workflow_mar_complet.png[workflow,30%]
 
 [NOTE.speaker]
 ====
-Cette application gère des demandes d'agrément.
-
 Ne cherchez pas à lire, il n'y a rien de marqué.
 
-Une demande a un cycle de vie complexe, nous avons besoin de mettre en place des jeux de données pour chaque état.
+Demande => cycle de vie complexe => symfo workflow
 
-Demande => ajout de fichier => deposer la demande => instruire
+Besoin de jeux de données pour chaque état.
 
 ====
 
-=== Demandes & utilisateurs
-
-* Demandeur
-* Demande
-* Intervenant
+=== Demandes
 
 [NOTE.speaker]
 ====
-
-Demande == Dossier d'information
-
-* l'identité de notre demandeur,
-* Qualif / société.
-* Fichiers
-* Périmètre d'intervention
-
+* Constitution de dossier => beaucoup d'info à saisir
+* Périmètre géographique
+* Pièces jointes
 ====
 
 === l'instruction
