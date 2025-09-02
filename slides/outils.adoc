@@ -1,16 +1,24 @@
 == Outillons-nous
 
-[%step]
+image::images/home-erectus.png[100%]
+[NOTE.speaker]
+====
+
+On a fait que coder.
+
+Besoin : créer des données pour tous les états d'une demande.
+
+Je ne veux pas avoir à tout écrire à la main pour chaque cas.
+
+Code == TU
+====
+
+[%notitle]
+=== Générons des données
 image::images/process2.svg[30%]
 
 [NOTE.speaker]
 ====
-Par contre, on a fait que coder
-Mon besoin principal est de créer des données pour tous les états d'une demande.
-Je ne veux pas avoir à tout écrire à la main.
-Code == TU
-
-Nous allons donc voir comment nous pouvons outiller tout cela.
 
 * Données nécessaires : utilisateurs / données géographiques
 * Parcours fichier : un scénario par demande
@@ -45,13 +53,12 @@ Par contre il y a beacoup d'information qui ont du sens pour un instructeur mais
 === Décrivons cette histoire
 
 [%step]
-[source,yaml,highlight="1..23|2,5,7,11,17|18..21|22,23"]
+[source,yaml,highlight="1..22|2,6,10,16|17..20|21,22"]
 ----
 demandeur:
   email: "john.doe@test"
   prenom: "John"
   nom: "Doe"
-  date_creation: "20/01/2023"
   telephone: "+33612345678"
 qualite: "qualite"
 societe:
@@ -84,20 +91,19 @@ Certaines données sont importantes pour l'instruction pas pour noous
 Demandeur :
 
 * mail
-* date,
 * qualité
 * siren
 * commune
+* date
 ====
 
 === Il manque un pitch
 
-[source,%numlines,yaml,highlight="2..13|1|8..9|1..13"]
+[source,%numlines,yaml,highlight="2..12|1|7..8|1..12"]
 ----
 description: "Mon premier cas de test"
 demandeur:
   email: "john.doe@test"
-  date_creation: "2023-01-20T10:00:00+02:00"
 societe:
   siren: "123456789"
   commune: "Bordeaux"

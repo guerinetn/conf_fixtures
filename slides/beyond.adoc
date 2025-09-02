@@ -58,21 +58,22 @@ Ce n'est pas que pour la dev,
 
 === Un film, on en fait la promo.
 
+[cols="1,1,1,2,1,1,2"]
 |===
-|Demandeur | Superviseur | Instructeur | Périmètre | etat | Fichier de fixtures
+|Demandeur | Superviseur | Instructeur | Périmètre | etat | Fichier de fixtures | Description
 
-| cas-1@test | superviseur_75@test | instructeur_24@test | Dordogne | agree | scenario_1.yml
-| cas-2@test | superviseur_75@test | instructeur_33@test | Nouvelle-Aquitaine, Occitanie | refuse | scenario_2.yml
-| cas-3@test | superviseur_75@test | instructeur_33@test | Nouvelle-Aquitaine, Occitanie | incomplete | scenario_3.yml
-| cas-4@test | superviseur_75@test |  | Landes, Lot & Garonne, Hautes-Pyrénées, Pyrénées Atlantiques | deposee | scenario_4.yml
+| cas-1@test | superviseur_75@test | instructeur_24@test | Dordogne | agree | scenario_1.yml | Mon premier cas de test
+| cas-2@test | superviseur_75@test | instructeur_33@test | Nouvelle-Aquitaine, Occitanie | refuse | scenario_2.yml | Demande refusée
+| cas-3@test | superviseur_75@test | instructeur_33@test | Nouvelle-Aquitaine, Occitanie | incomplete | scenario_3.yml| Demande incomplète
+| cas-4@test | superviseur_75@test |  | Landes, Lot & Garonne, Hautes-Pyrénées, Pyrénées Atlantiques | deposee | scenario_4.yml| Demande Déposée
 |===
 
 [soure,asciidoc]
 ----
 |===
-|Demandeur | Superviseur | Instructeur | Périmètre | etat | Fichier de fixtures
+|Demandeur | Superviseur | Instructeur | Périmètre | etat | Fichier de fixtures | Description
 
-| cas-1@test | superviseur_75@test | instructeur_24@test | Dordogne | agree | scenario_1.yml
+| cas-1@test | superviseur_75@test | instructeur_24@test | Dordogne | agree | scenario_1.yml | Mon premier cas de test
 |===
 ----
 
@@ -91,7 +92,7 @@ C'est de AsciiDoc et les informations ont les a dans les fichiers yaml
 
 === Vers une histoire collaborative.
 
-image::images/scenrio_a_plusieurs.png[scenario,45%]
+image::images/scenrio_a_plusieurs.png[scenario,55%]
 
 [NOTE.speaker]
 ====

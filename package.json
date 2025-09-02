@@ -2,10 +2,25 @@
   "dependencies": {
     "@asciidoctor/reveal.js": "^5.2.0",
     "asciidoctor": "^3.0.4",
-    "highlight.js": "^11.11.1"
+    "highlight.js": "^11.11.1",
+    "npm-watch": "^0.13.0"
   },
   "scripts": {
     "build": "npx asciidoctor-revealjs slides/index.adoc",
-    "start": "docker compose up -d"
+    "start": "npm run start:container && npm run watch",
+    "start:container": "docker compose up -d",
+    "watch": "npm-watch"
+  },
+  "watch": {
+    "build": {
+      "patterns": [
+        "**/*.adoc",
+        "**/*.css",
+        "**/*.{jpg,jpeg,png,gif,svg,webp}"
+      ],
+      "extensions": "adoc,css,jpg,jpeg,png,gif,svg",
+      "quiet": false,
+      "inherit": true
+    }
   }
 }

@@ -43,6 +43,9 @@ body:after {
 
     section {
         h1 {
+            margin-top: 25rem;
+            font-size: 1.2em;
+            text-transform: uppercase;
         }
 
         h2 {
@@ -92,12 +95,16 @@ body:after {
         }
     }
 
-    #_passons_donc_aux_demandes {
+    #_passons_donc_aux_demandes_2 {
+        /*.slide-content {*/
+        /*    top: 0 !important;*/
+        /*}*/
+
         .code-wrapper {
             width: 95%;
 
             code {
-                font-size: 20px;
+                /*font-size: 20px;*/
                 line-height: normal;
             }
         }
@@ -185,7 +192,7 @@ body:after {
 
     #_un_film_on_en_fait_la_promo {
         .content pre {
-            font-size: 18px;
+            font-size: 15px;
             line-height: normal;
         }
 
@@ -204,11 +211,18 @@ body:after {
             font-size: 15px;
         }
     }
+    #_vers_une_histoire_collaborative{
+        h2 {
+            font-size: 1em;
+            margin-bottom: 0;
+        }
+        img {
+            margin-top: 0;
+        }
+    }
 
     #_merci {
         font-size: larger;
     }
 }
-
-
 

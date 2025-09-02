@@ -3,7 +3,7 @@
 
 [.column]
 --
-image::images/avatar.png[nico,80%]
+image::images/avatar.jpg[nico,70%]
 --
 
 [.column.has-text-left]

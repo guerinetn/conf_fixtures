@@ -1,58 +1,45 @@
+[.columns]
 == Quand vous arrivez sur un projet...
 
-[NOTE.speaker]
-====
-Je ne sais pas pour vous, mais en général, pour moi, quand je commence à travailler sur un projet existant.
-
-Cela commence par cela.
-====
-
-[.columns]
-
-=== L'installation ...
-
-
+[step=1]
 [.column]
 --
 image::images/intro/readme.png[readme,100px]
 --
+
+[step=1]
 [.column]
 --
 image::images/intro/git.png[git,100px]
 --
 
-[step=1]
+[step=2]
 [.column]
 --
 image::images/intro/npm.png[npm,100px]
 --
 
-[step=1]
+[step=2]
 [.column]
 --
 image::images/intro/logo-composer-transparent.png[composer,100px]
 --
 
-[step=2]
+[step=3]
 [.column]
 --
 image::images/intro/docker-compose.png[docker,100px]
 --
 
-[step=2]
+[step=3]
 [.column]
 --
 image::images/intro/doctrine-logo.svg[doctrine,100px]
 --
 
+
 [NOTE.speaker]
 ====
-
-* Readme, interressant sur l'install
-* Git, je clone le projet
-* dépendances back et front
-* init bdd & migration
-* let's go
 
 ====
 

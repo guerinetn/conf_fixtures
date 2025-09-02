@@ -131,6 +131,7 @@ Candidate Service :
 * Sauvegarde en bdd
 * Envoi du mail d'activation du compte
 * Création d'un historique de création
+* Société
 ====
 
 === La notion de périmètre
@@ -212,7 +213,7 @@ et nous allons créer des superviseur.
 * On prendra ensuite un principe similaire en parcours les régions pour créer des superviseurs.
 ====
 
-=== Les intervenants
+=== Passons donc aux demandes
 
 [source,php,%linenums,highlight="1|6,7|1..9"]
 ----
@@ -233,11 +234,14 @@ class DemandeFixtures extends Fixture implements DependentFixtureInterface
 Pour les demandes, nous avons besoin d'instructeurs rendons les dépendants.
 ====
 
+[%notitle]
 === Passons donc aux demandes
 
-[source, php,%linenums,highlight="1..3|5..21|23|1..23"]
+[source, php,%linenums,highlight="1..5|7..23|25|1..25"]
 ----
-$candidate = $this->creeDemandeur("John", "Doe", "john.doe@test", "123456789", "Société", "motDePasse");
+$candidate = $this->creeDemandeur(
+    "John", "Doe", "john.doe@test", "123456789", "Société", "motDePasse"
+);
 $candidate->getUser()->setRoles([Role::ROLE_DEMANDEUR->name]);
 $commune = $this->communeRepository->findOneBy(['nom' => 'Bordeaux']);
 
@@ -480,11 +484,20 @@ image::images/workflow_mar_start_complete.svg[workflow,100%]
 
 * Données OK
 * Connexion OK
-* fichiers OK
+*% fichiers OK
 * Consulation OK
 * Historisque bof
 
+====
+
+=== Pas trop vite
+
+image::images/roadrunner.png[bibibp,60%]
+
+[NOTE.speaker]
+====
 Le demandeur à déposé 25 fichiers, l'instructeur les a contrôlé et a demandé des compléments, le demandeur a répondu et l'instructeur a confirmé la complétude.
 Le tout a 1,3 seconde.
 Pas très réaliste.
+
 ====

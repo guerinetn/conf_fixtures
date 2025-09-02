@@ -1,3 +1,4 @@
+[%notitle]
 == Il est temps de voyager
 
 image::images/delorean3.png[delorean]
@@ -7,7 +8,6 @@ image::images/delorean3.png[delorean]
 
  Ca existe de forcer une date dans Symfony ?
 ====
-
 
 === SymfonyClock
 
@@ -64,6 +64,7 @@ Réaliste
 
 ====
 
+[%notitle]
 === Figeons le temps
 
 [source,php,%linenums,highlight="1..5|7..8|10,11|1..11"]

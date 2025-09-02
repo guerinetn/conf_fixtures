@@ -5,11 +5,11 @@
 :revealjs_history: true
 :revealjs_pdfseparatefragments: false
 :source-highlighter: highlightjs
-// :highlightjsdir: js
 :highlightjs-languages: php, yaml
 :revealjs_width: 1280
 :customcss: css/custom.css
 :toc:
+:title-slide-background-image: images/logo-main.png
 
 [NOTE.speaker]
 ====
@@ -36,5 +36,3 @@ include::beyond.adoc[]
 include::conclusion.adoc[]
 
 include::merci.adoc[]
-
-====
