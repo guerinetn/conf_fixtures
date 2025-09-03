@@ -186,7 +186,7 @@ actions:
   -
     user: DEMANDEUR
     action: DONNER_COMPLEMENT
-    date: '2024-01-25T10:15   :00+02:00'
+    date: '2024-01-25T10:15:00+02:00'
 ----
 
 [NOTE.speaker]

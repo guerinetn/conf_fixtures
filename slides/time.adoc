@@ -53,7 +53,7 @@ $this->demandeService->donnerComplement(user: $demandeur, demande: $demande);
 [NOTE.speaker]
 ====
 
-* 6 juin = affectation
+* 1 juin = affectation
 * 8 juin = demande de complément
 * 16 juin = ajout de fichier
 * 1er juillet = ajout de fichier

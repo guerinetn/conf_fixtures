@@ -237,12 +237,11 @@ Pour les demandes, nous avons besoin d'instructeurs rendons les dépendants.
 [%notitle]
 === Passons donc aux demandes
 
-[source, php,%linenums,highlight="1..5|7..23|25|1..25"]
+[source, php,%linenums,highlight="1..4|6..22|24|1..24"]
 ----
 $candidate = $this->creeDemandeur(
     "John", "Doe", "john.doe@test", "123456789", "Société", "motDePasse"
 );
-$candidate->getUser()->setRoles([Role::ROLE_DEMANDEUR->name]);
 $commune = $this->communeRepository->findOneBy(['nom' => 'Bordeaux']);
 
 $param = [
@@ -442,9 +441,9 @@ image::images/depose_diagram.svg[depose]
 
 === Demande de complément et réponse
 
-image::images/workflow_mar_start_depose.svg[workflow,100%]
+image::images/workflow_mar_start_depose.png[workflow,100%]
 
-=== Et on continue le parcours
+=== On continue le parcours
 
 [source,php,%linenums,highlight="1..4|6|8|10..12|14|1..14"]
 ----
