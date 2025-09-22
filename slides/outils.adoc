@@ -206,7 +206,7 @@ actions:
 public function parcoursAction(array $demandeConfig, Demande $demande): void
 {
     foreach ($demandeConfig['actions'] as $action) {
-        $user = $action['user'];
+        $user = $this->getReference($action['user'], User::class);
         match ($action['action']) {
             'depose' => $this->demandeService->depose($user, $demande),
             'affecte' => $this->demandeService->affecte($user, $demande, $action['payload']),
@@ -225,19 +225,6 @@ image::images/process.svg[process,90%]
 ====
 Nous pouvons donc simplement écrire des scénarios pour tous les états d'une demande.
 ====
-
-[%notitle]
-=== Gestion scénario
-
-image::images/process_final.svg[process_final,85%]
-
-[NOTE.speaker]
-====
-* Contrôle des données
-* L'application sait quand c'est faux.
-* Création d'un scénario par défaut
-====
-
 
 [%notitle]
 === scenario_par_defaut
@@ -281,3 +268,16 @@ date_creation: "<a_modifier>"
 * Remplir les données non saisies
 
 ====
+
+[%notitle]
+=== Gestion scénario
+
+image::images/process_final.svg[process_final,85%]
+
+[NOTE.speaker]
+====
+* Contrôle des données
+* L'application sait quand c'est faux.
+* Création d'un scénario par défaut
+====
+

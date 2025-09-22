@@ -134,13 +134,12 @@ body:after {
         }
     }
 
-    #_et_on_continue_le_parcours {
+    #_on_continue_le_parcours {
         .code-wrapper {
             width: 100%;
-        }
-
-        code {
-            font-size: 20px;
+            code {
+                font-size: 20px;
+            }
         }
     }
 

@@ -355,7 +355,7 @@ $demande = $this->getReference('DEMANDE', Demande::class);
 foreach (Demande::Procedure as $typePj) {
     $this->fixtureService->addPjsBrouillon(
         demande: $demande,
-        nom: "test_{$type}.pdf",
+        nom: "test_{$typePj->nom}.pdf",
         codeTypePj: $typePj->code()
     );
 }

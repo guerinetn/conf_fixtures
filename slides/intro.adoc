@@ -41,10 +41,16 @@ image::images/intro/doctrine-logo.svg[doctrine,100px]
 [NOTE.speaker]
 ====
 
+* readme
+* checkout des sources
+* build npm / composer
+* build / lance  containers
+* Doctrine migration
+
 ====
 
 [.columns]
-=== Et les données ?
+=== Et pour les données ?
 
 [.column]
 --
