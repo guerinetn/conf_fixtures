@@ -1,4 +1,4 @@
-= Fixtures et si on allait au-delà des données
+= Et si l'on scénarisait nos fixtures ?
 :icons: font
 :revealjs_theme: simple
 :revealjs_slideNumber: true
@@ -15,7 +15,7 @@
 ====
 Bonjour merci pour l'invitation…
 
-Aujourd'hui, je vais vous parler de fixtures mais pas que, et si on allait au-delà des données ?
+Aujourd'hui, je vais vous parler de fixtures mais aussi de scénarii et
 
 ====
 
