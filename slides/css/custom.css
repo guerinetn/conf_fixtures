@@ -18,6 +18,14 @@ body:after {
     background-position: 95%;
 }
 
+body.title:after {
+    background-image: url(onepoint_white.png);
+}
+
+body.title .reveal .slide-number {
+    color: #fff;
+}
+
 .reveal .slides {
     font-family: "Poppins", serif;
 
@@ -222,6 +230,41 @@ body:after {
 
     #_merci {
         font-size: larger;
+    }
+
+    section.title h1 {
+        display: none;
+    }
+
+    #_la_stack_technique img {
+        width: 150px;
+        height: 150px;
+        object-fit: contain;
+    }
+
+    .credit {
+        font-size: 0.4em;
+        opacity: 0.6;
+        text-align: center;
+        margin-top: 0.5em;
+    }
+
+    h2:has(img) {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4em;
+    }
+
+    .r-stack > .content {
+        display: grid;
+    }
+    .r-stack > .content > * {
+        grid-area: 1/1;
+    }
+
+    #_périmètre_géographique .code-wrapper {
+        width: 100%;
     }
 }
 

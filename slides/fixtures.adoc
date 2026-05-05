@@ -1,13 +1,11 @@
 == Fixtures
 
 [%step]
-[source,php,highlight="1..5|1..3"]
+[source,php]
 ----
 $toto = new Toto();
 
 $toto->setToto('truc');
-
-assertEquals($toto->getToto(), 'truc');
 ----
 
 [NOTE.speaker]
@@ -22,10 +20,10 @@ Dans Symfony c'est Doctrine Fixtures dont on m'a parlé
 Doctrine === ORM
 ====
 
+=== image:images/intro/doctrine-logo.svg[doctrine,120] FixtureBundle
 
-=== FixtureBundle
 
-[source,php,highlight="1..3|7..8|1..10"]
+[source,php,highlight="1..3|5..8|1..10"]
 ----
 class AppFixtures extends Fixture
 {
@@ -33,8 +31,8 @@ class AppFixtures extends Fixture
     {
         $objet = new Object();
 
-        $this->addReference("reference", $objet);
-        $this->getReference("reference", $objet::class);
+        $manager->persist($objet);
+        $manager->flush();
     }
 }
 ----
@@ -49,31 +47,11 @@ class AppFixtures extends Fixture
 
 ====
 
-=== Gestion dépendances
-
-[source,php,highlight="1|3..6|1..7]
-----
-class AppFixtures extends Fixture implements DependentFixtureInterface
-{
-    public function getDependencies(): array
-    {
-        return [];
-    }
-}
-----
-[NOTE.speaker]
-====
-
-* Interface
-* getDependencies == ordonnancement
-
-====
-
 === Première fixture
 
 [source, php,%linenums,highlight="1..4|5..9|11 ..12|14|1..14"]
 ----
-class AppFixturesBasis extends Fixture
+class DemandeurFixture extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
@@ -103,21 +81,24 @@ demandeur == pas dans keycloak
 
 ====
 
-=== Créons donc un Candidat.
+=== Candidat
 
-[source, php,%linenums,highlight="3|5..10|11"]
+[source, php,%linenums,highlight="5..11|13|1..13"]
 ----
-public function load(ObjectManager $manager): void
+class DemandeurFixture extends Fixture
 {
-    $candidate = new Candidate();
+    public function load(ObjectManager $manager): void
+    {
+        $candidate = new Candidate(
+            firstName: "John",
+            lastName: "Doe",
+            email: "john.doe@test",
+            siren: "123456789",
+            password: "mot2Passe"
+        );
 
-    $candidate->setFirstName("John");
-        ->setLastName("Doe")
-        ->setEmail("john.doe@test.test")
-        ->setSiren("123456789")
-        ->setName("Société")
-        ->setPassword("motDePasse");
-    $this->candidateService->create($candidate);
+        $this->candidateService->create($candidate);
+    }
 }
 ----
 
@@ -134,10 +115,16 @@ Candidate Service :
 * Société
 ====
 
-=== La notion de périmètre
+=== Périmètre Géographique
 
-[%step]
-[source, php,%linenums,highlight="1..9|1,9..18"]
+[.r-stack]
+--
+
+[.fade-out, step=1]
+image::images/carte-france-regions-departements.webp[carte,450px]
+
+[step=1]
+[source, php,%linenums,highlight="1..3|5..7|1..9"]
 ----
 class GeographicDataFixtures extends Fixture
 {
@@ -148,18 +135,8 @@ class GeographicDataFixtures extends Fixture
         $this->communesCommand->execute($this->input, $this->output);
     }
 }
-
-class AppFixtures extends Fixture
-{
-    public function getDependencies(): array
-    {
-        return [
-            GeographicDataFixtures::class,
-        ];
-    }
 ----
-
-
+--
 [NOTE.speaker]
 ====
 On a parlé de demande, et de périmètre d'une demande.
@@ -170,9 +147,33 @@ Heureusement, nous avons une commande qui permet de créer des communes, des dé
 On a donc un candidat, mais il nous faut également des instructeurs.
 ====
 
+=== image:images/intro/doctrine-logo.svg[doctrine,120] DependentFixtureInterface
+
+[source,php,highlight="1..4|6..8|1..7]
+----
+class DemandeurFixture extends Fixture implements DependentFixtureInterface
+{
+    ...
+    public function getDependencies(): array
+    {
+        return [
+            GeographicDataFixtures::class,
+        ];
+    }
+    ...
+}
+----
+[NOTE.speaker]
+====
+
+* Interface
+* getDependencies == ordonnancement
+
+====
+
 === Les intervenants
 
-[source,php,highlight="1..8|12|13..19|20|21|1..21"]
+[source,php,highlight="1..8|12..19|1..22"]
 ----
 class IntervenantFixtures extends Fixture implements DependentFixtureInterface
 {
@@ -186,15 +187,13 @@ class IntervenantFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager): void
     {
         foreach ($this->departementRepository->findAll() as $departement) {
-            $instructeur = new Intervenant();
-            $email = "instructeur_{$dpt->getCode()}@test.test";
-            $instructeur->setFirstName('Instructeur')
-                ->setLastName($departement->getNom())
-                ->setEmail($email)
-                ->setRoles([Role::ROLE_INSTRUCTEUR->name])
-                ->setPerimetreSupervision((new PerimetreIntervention())->addDepartement($dpt));
+            $instructeur = new Intervenant(
+                name: "Instructeur",
+                email: "instructeur_{$dpt->getCode()}@test",
+                roles: [Role::ROLE_INSTRUCTEUR->name],
+                perimetre: new PerimetreIntervention(dpts: [$dpt])
+            );
             $this->intervenantService->create($instructeur);
-            $this->addReference('INSTRUCTEUR_' . $dpt->getCode(), $instructeur);
         }
     }
 }
@@ -204,12 +203,10 @@ class IntervenantFixtures extends Fixture implements DependentFixtureInterface
 ====
 
 Comme pour les demandeurs, nous avons des services pour créer les instructeurs.
-et nous allons créer des superviseur.
 
 * Dépendant géo
 * On parcourt tous les départements, on crée un instructeur par département.
 * serviceCreateInstructeur ==  (Keycloak / histo)
-* Stockage de la référence
 * On prendra ensuite un principe similaire en parcours les régions pour créer des superviseurs.
 ====
 
@@ -348,10 +345,8 @@ On a donc une fonction qui permet de créer un fichier qui pourra être manipul�
 
 === Demandes & fichiers
 
-[source,php,highlight="1,3|4..8|1..8"]
+[source,php,highlight="1|2..6|1..6"]
 ----
-$demande = $this->getReference('DEMANDE', Demande::class);
-
 foreach (Demande::Procedure as $typePj) {
     $this->fixtureService->addPjsBrouillon(
         demande: $demande,
@@ -406,6 +401,25 @@ C'est mieux ?
 
 Brouillon => Déposée => Affectée <=> Incomplete => Complete
 
+====
+
+=== image:images/intro/doctrine-logo.svg[doctrine,120] Le registre
+
+[source,php]
+----
+$this->addReference('INSTRUCTEUR_' . $dpt->getCode(), $instructeur);
+
+$this->addReference('SUPERVISEUR_' . $region->getCode(), $superviseur);
+
+$this->addReference('DEMANDE' , $demande);
+
+$this->addReference('DEMANDEUR' , $demandeur);
+----
+[NOTE.speaker]
+====
+
+* Stockage de la référence
+* récupération d'une référence
 ====
 
 === Dépôt d'une demande

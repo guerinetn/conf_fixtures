@@ -9,7 +9,9 @@
 :revealjs_width: 1280
 :customcss: css/custom.css
 :toc:
-:title-slide-background-image: images/logo-main.png
+:title-slide-background-image: images/intro_afudays_2026.png
+:title-slide-background-size: contain
+:title-slide-background-color: #0B1526
 
 [NOTE.speaker]
 ====

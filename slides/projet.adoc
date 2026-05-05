@@ -1,6 +1,25 @@
+[.columns]
 == La stack technique
 
-image::images/intro/stack_appli.png[stack]
+[.column]
+--
+image::images/intro/symfony_icon.svg[symfony,150px]
+--
+
+[.column]
+--
+image::images/intro/keycloak_icon.svg[keycloak,150px]
+--
+
+[.column]
+--
+image::images/intro/postgres_logo.png[postgres,150px]
+--
+
+[.column]
+--
+image::images/intro/angular_icon.svg[angular,150px]
+--
 
 [NOTE.speaker]
 ====
@@ -9,9 +28,53 @@ REX === contexte
 
 Le projet sur lequel nous travaillons est une application web composée de 3 briques.
 
-Backend / Frontend / Authentification
+Backend / Frontend / Authentification / Persistance
 
-Mailpit
+====
+
+[.columns]
+=== Gestion d'agrément
+
+[.column]
+--
+image::images/intro/depot.svg[depot,350px]
+
+[.credit]
+_Illustration : https://storyset.com[Storyset]_
+--
+
+[.column]
+--
+image::images/intro/instruction.png[instruction,350px]
+--
+
+[NOTE.speaker]
+====
+Plateforme de dépot de demande
+
+* Constitution de dossier => beaucoup d'info à saisir
+* Périmètre géographique
+* Pièces jointes
+
+Instruction de demande
+
+* analyse des dossiers
+* Décision sur les dossiers
+* recours ...
+====
+
+=== Cycle de vie d'un dossier
+
+image::images/intro/instrution2.png[instruction,40%]
+
+[NOTE.speaker]
+====
+
+* Analyse des demandes
+* Suivi des agréments
+* Gestion de la fraude
+
+*Pour l'exemple on ne va parler que des demandes*
 
 ====
 
@@ -24,35 +87,11 @@ image::images/workflow_mar_complet.png[workflow,30%]
 ====
 Ne cherchez pas à lire, il n'y a rien de marqué.
 
-Demande => cycle de vie complexe => symfo workflow
+* Demande => cycle de vie complexe => symfo workflow
+* Besoin de jeux de données pour chaque état / opérations.
+* Historique / Audit / Traçabilité
 
-Besoin de jeux de données pour chaque état.
+*Pour générer tous ces outils, on me parle de fixtures ok c'est quoi*
 
-====
 
-=== Demandes
-
-[NOTE.speaker]
-====
-* Constitution de dossier => beaucoup d'info à saisir
-* Périmètre géographique
-* Pièces jointes
-====
-
-=== l'instruction
-
-image::images/intro/instrution2.png[instruction,40%]
-
-[NOTE.speaker]
-====
-
-Une fois un dossier constitué un demandeur va déposer son dossier.
-
-Ces demandes sont instruites par des instructeurs et des superviseurs.
-
-Historique / Audit / Traçabilité
-
-J'ai donc besoin de créer des données pour chacune de ces opérations.
-
-Pour générer tous ces outils, on me parle de fixtures ok c'est quoi
 ====
