@@ -3,6 +3,8 @@
 
 image::images/delorean3.png[delorean]
 
+Et s'il était possible de manipuler le temps avec Symfony ?
+
 [NOTE.speaker]
 ====
 
@@ -11,15 +13,17 @@ image::images/delorean3.png[delorean]
 
 === SymfonyClock
 
-[source, php,highlight="1..7|3,4|6|7"]
+[source, php,%numlines]
 ----
 use function Symfony\Component\Clock\now;
-
-/* Get the current time as a DatePoint instance */
 $now = now();
 
 Clock::set(new MockClock("2024-01-01"));
+$now = now();               /* ==> à 2024-01-01 00:00:00 */
+$now = now('+10h');        /* ==> 2024-01-01 10:00:00 */
+
 Clock::set(new NativeClock());
+$now = now();              /* ==> Maintenant */
 ----
 
 [NOTE.speaker]
@@ -31,7 +35,13 @@ Avec MockClock, on a tout ce qu'il nous faut pour rendre notre cas de test réal
 ====
 
 === Figeons le temps
+[.r-stack]
+--
 
+[.fade-out, step=1]
+image::images/workflow_mar_start_depose.png[workflow,100%]
+
+[step=1]
 [source,php,%linenums,highlight="1..2|1,4,7,10,13|1..14"]
 ----
 Clock::set(new MockClock("2024-06-01"));
@@ -49,12 +59,13 @@ $this->demandeService->addPjsBrouillon($demande, "complement2.pdf", "complement"
 Clock::set(new MockClock("2024-07-22"));
 $this->demandeService->donnerComplement(user: $demandeur, demande: $demande);
 ----
+--
 
 [NOTE.speaker]
 ====
 
 * 1 juin = affectation
-* 8 juin = demande de complément
+* 8 juin = demane de complément
 * 16 juin = ajout de fichier
 * 1er juillet = ajout de fichier
 * 22 juillet = donner complément
@@ -64,9 +75,15 @@ Réaliste
 
 ====
 
-[%notitle]
-=== Figeons le temps
+=== Et rejetons, c'est possible
 
+[.r-stack]
+--
+
+[.fade-out, step=1]
+image::images/workflow_rejet.png[workflow,100%]
+
+[step=1]
 [source,php,%linenums,highlight="1..5|7..8|10,11|1..11"]
 ----
 Clock::set(new MockClock("2024-07-23"));
@@ -81,7 +98,7 @@ $this->demandeCommand->checkDelaiReponse();
 Clock::set(new MockClock("2024-09-02"));
 $this->demandeService->refuserDemande(user: $instructeur, demande: $demande, commentaire: 'Hors délai');
 ----
-
+--
 [NOTE.speaker]
 ====
 
@@ -89,8 +106,6 @@ $this->demandeService->refuserDemande(user: $instructeur, demande: $demande, com
 * 31 juillet = demande de complément
 * 1er septembre = vérification délai
 * 2 septembre = refus de la demande
-
-Sans bidouiller impossilbe
 
 ====
 

@@ -1,0 +1,15 @@
+graph LR
+    style one fill:none,stroke-width:8px,stroke:red;
+
+
+    subgraph one[" "]
+        place3{{"incomplete"}}
+        style place3 fill:#359A58,color:white,stroke-width:1px,stroke:black
+        place11("affectee_rejet_possible")
+        style place11 fill:#25729A,color:white,stroke-width:1px,stroke:black
+    end
+    place12("affectee_rejet_possible")
+    style place12 fill:#25729A,color:white,stroke-width:1px,stroke:black
+    place3===>|"complement perime (1mois)"|place11
+    place11--->|"rejeter demande"|place12
+    linkStyle 0,1 stroke:#25729A,color:#25729A,stroke-width:2px

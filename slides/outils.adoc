@@ -157,8 +157,14 @@ $this->demandeFixturesService->completeDemande($demande);
 
 [%notitle]
 === Action!
+[.r-stack]
+--
 
-[source.yaml,%numlines,highlight="1|2..5|6..9|10,11|6..11|13..17|19..23,25..27"]
+[.fade-out, step=1]
+image::images/workflow_mar_start.svg[workflow,100%]
+
+[step=1]
+[source.yaml,%numlines,highlight="1|2..5|6..11|13..17|19..27"]
 ----
 actions:
   -
@@ -187,7 +193,9 @@ actions:
     user: DEMANDEUR
     action: DONNER_COMPLEMENT
     date: '2024-01-25T10:15:00+02:00'
+ -
 ----
+--
 
 [NOTE.speaker]
 ====

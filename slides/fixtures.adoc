@@ -49,23 +49,22 @@ class AppFixtures extends Fixture
 
 === Première fixture
 
-[source, php,%linenums,highlight="1..4|5..9|11 ..12|14|1..14"]
+[source, php,%linenums,highlight="1,3|5..10|3,12..13"]
 ----
 class DemandeurFixture extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        $demandeur = new Demandeur();
-        $demandeur->setEmail('test@test.test');
-        $demandeur->setFirstname('John');
-        $demandeur->setLastname('Doe');
-        $demandeur->setRoles([Role::ROLE_DEMANDEUR->name]);
+        $demandeur = new Demandeur(
+            emmail: 'test@test.test',
+            firstName: 'John',
+            lastName: 'Doe',
+            roles: [Role::ROLE_DEMANDEUR->name]
+        );
 
         $manager->persist($demandeur);
         $manager->flush();
-
-        $this->addReference('DEMANDEUR', $demandeur);
-    }
+ }
 }
 ----
 
@@ -83,10 +82,14 @@ demandeur == pas dans keycloak
 
 === Candidat
 
-[source, php,%linenums,highlight="5..11|13|1..13"]
+[source, php,%linenums,highlight="4|7..15|17"]
 ----
 class DemandeurFixture extends Fixture
 {
+    public function __construct(
+        private readonly CandidateService $candidateService,
+    ) {
+    }
     public function load(ObjectManager $manager): void
     {
         $candidate = new Candidate(
@@ -94,7 +97,7 @@ class DemandeurFixture extends Fixture
             lastName: "Doe",
             email: "john.doe@test",
             siren: "123456789",
-            password: "mot2Passe"
+            password: "mot2Passe",
         );
 
         $this->candidateService->create($candidate);
@@ -124,10 +127,18 @@ Candidate Service :
 image::images/carte-france-regions-departements.webp[carte,450px]
 
 [step=1]
-[source, php,%linenums,highlight="1..3|5..7|1..9"]
+[source, php,%linenums,highlight="1..9|11..16"]
 ----
 class GeographicDataFixtures extends Fixture
 {
+    public __construct(
+        private readonly ImportDepartementRegionCommand $departementRegionCommand,
+        private readonly ImportEpcisCommand $epcisCommand,
+        private readonly ImportCommunesCommand $communesCommand,
+    ){
+        $this->io = new SymfonyStyle(new ArrayInput([]), new ConsoleOutput());
+    }
+
     public function load(ObjectManager $manager): void
     {
         $this->departementRegionCommand->execute($this->input, $this->output);
@@ -272,19 +283,31 @@ Là encore, on pourrait créer tous les objets, mais on a un service qui nous pe
 Nous utilisons le service pour créer notre demande.
 ====
 
-[.columns]
 === La problématique des fichiers
 
-[.column]
---
-image::images/logo_pdf.png[logo_pdf,200px]
-image::images/fichier_bash.png[fichier]
+[.r-stack]
 --
 
-[.column]
+[.fade-out, step=1]
+====
+image::images/tons-of-file.jpg[tons,400px]
+[.credit]
+_Image : https://www.magnific.com/free-photo/young-employee_1012225.htm[kues1 on Magnific]_
+
+====
+[step=1]
++++
+<div style="display:flex; gap:2em; justify-content:center; align-items:center;">
+  <div style="display:flex; flex-direction:column; gap:1em; align-items:center;">
+    <img src="images/logo_pdf.png" width="200">
+    <img src="images/fichier_bash.png">
+  </div>
+  <img src="images/fichier_test.png" width="300">
+</div>
++++
+
 --
-image::images/fichier_test.png[fichier,300px]
---
+
 
 [NOTE.speaker]
 ====
@@ -300,7 +323,7 @@ Le contenu du fichier, on s'en moque un peu, il faut qu'il y en ait un pour que 
 [%notitle]
 === La problématique des fichiers
 
-[source,php,%linenums,highlight="1..9|16..22|15|10..14|1..24"]
+[source,php,%linenums,highlight="1..24|10..14"]
 ----
 public function createUploadedFile(string $nom): UploadedFile
 {
@@ -345,7 +368,7 @@ On a donc une fonction qui permet de créer un fichier qui pourra être manipul�
 
 === Demandes & fichiers
 
-[source,php,highlight="1|2..6|1..6"]
+[source,php,%linenums]
 ----
 foreach (Demande::Procedure as $typePj) {
     $this->fixtureService->addPjsBrouillon(
@@ -369,31 +392,18 @@ Notre demande est donc complète.
 
 === Ce n'est que le début de l'histoire
 
+[.r-stack]
+--
+[.fade-out, step=1]
 image::images/workflow_mar_complet.svg[workflow,30%]
 
-[NOTE.speaker]
-====
-Ce n'est pas lisible
-====
-
-=== Ce n'est que le début de l'histoire
-
-image::images/workflow_mar_simplifie.svg[workflow,100%]
-
-[NOTE.speaker]
-====
-Toujours pas
-====
-
-[%notitle]
-=== Ce n'est que le début de l'histoire
-
+[step=1]
 image::images/workflow_mar_start.svg[workflow,100%]
-
+--
 [NOTE.speaker]
 ====
-
-C'est mieux ?
+Ce n'est pas lisible ?
+De toutes façon on a pas le temps pour tout.
 
 * Vert => demandeur
 * Orange/Marron => Superviseur
@@ -405,7 +415,7 @@ Brouillon => Déposée => Affectée <=> Incomplete => Complete
 
 === image:images/intro/doctrine-logo.svg[doctrine,120] Le registre
 
-[source,php]
+[source,php,highlight="1..7|9..15"]
 ----
 $this->addReference('INSTRUCTEUR_' . $dpt->getCode(), $instructeur);
 
@@ -414,6 +424,14 @@ $this->addReference('SUPERVISEUR_' . $region->getCode(), $superviseur);
 $this->addReference('DEMANDE' , $demande);
 
 $this->addReference('DEMANDEUR' , $demandeur);
+
+$instructeur= $this->getReference('INSTRUCTEUR_' . $dpt->getCode(), $instructeur);
+
+$superviseur = $this->getReference('SUPERVISEUR_' . $region->getCode(), $superviseur);
+
+$demande = $this->getReference('DEMANDE' , $demande);
+
+$demandeur = $this->getReference('DEMANDEUR' , $demandeur);
 ----
 [NOTE.speaker]
 ====
@@ -424,7 +442,14 @@ $this->addReference('DEMANDEUR' , $demandeur);
 
 === Dépôt d'une demande
 
-[source,php]
+[.r-stack]
+--
+
+[.fade-out, step=1]
+image::images/workflow_mar_start.svg[workflow,100%]
+
+[.fade-in-then-out, step=1]
+[source, php,%linenums]
 ----
 $demande = $this->getReference('DEMANDE', Demande::class);
 $demandeur = $this->getReference('DEMANDEUR', Demandeur::class);
@@ -432,18 +457,14 @@ $demandeur = $this->getReference('DEMANDEUR', Demandeur::class);
 $this->demandeService->deposer(user: $demandeur, demande: $demande);
 ----
 
+[step=2]
+image::images/depose_diagram.svg[depose]
+--
+
 [NOTE.speaker]
 ====
 Action simple, besoin d'une demande d'un demandeur.
 Par contre l'action de déposer une demande va déclencher une série d'événements.
-====
-
-=== Dépôt d'une demande
-
-image::images/depose_diagram.svg[depose]
-
-[NOTE.speaker]
-====
 
 * validation payload
 * transition
@@ -455,9 +476,13 @@ image::images/depose_diagram.svg[depose]
 
 === Demande de complément et réponse
 
+[.r-stack]
+--
+
+[.fade-out, step=1]
 image::images/workflow_mar_start_depose.png[workflow,100%]
 
-=== On continue le parcours
+[step=1]
 
 [source,php,%linenums,highlight="1..4|6|8|10..12|14|1..14"]
 ----
@@ -476,6 +501,8 @@ $this->demandeService->donnerComplement(user: $demandeur, demande: $demande);
 
 $this->demandeService->confirmerCompletude(user: $instructeur, demande: $demande);
 ----
+--
+
 [NOTE.speaker]
 =====
 
@@ -512,5 +539,15 @@ image::images/roadrunner.png[bibibp,60%]
 Le demandeur à déposé 25 fichiers, l'instructeur les a contrôlé et a demandé des compléments, le demandeur a répondu et l'instructeur a confirmé la complétude.
 Le tout a 1,3 seconde.
 Pas très réaliste.
+
+====
+
+=== et le rejet
+
+image::images/workflow_rejet.png[rejet,100%]
+
+[NOTE.speaker]
+====
+Délai d'un moi impossible
 
 ====

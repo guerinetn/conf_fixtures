@@ -80,6 +80,14 @@ body.title .reveal .slide-number {
         }
     }
 
+    #_périmètre_géographique .code-wrapper,
+    #_et_rejetons_cest_possible .code-wrapper,
+    #_passons_donc_aux_demandes_2 .code-wrapper,
+    #_dépôt_dune_demande .code-wrapper
+    {
+        width: 100%;
+    }
+
     #_fixtures, #_fixturebundle, #_fixturebundle_2, #_symfonyclock {
         .code-wrapper {
             code {
@@ -103,46 +111,13 @@ body.title .reveal .slide-number {
         }
     }
 
-    #_passons_donc_aux_demandes_2 {
-        /*.slide-content {*/
-        /*    top: 0 !important;*/
-        /*}*/
-
-        .code-wrapper {
-            width: 95%;
-
-            code {
-                /*font-size: 20px;*/
-                line-height: normal;
-            }
+    #_ce_nest_que_le_début_de_lhistoire {
+        .content {
+            width: 100%;
         }
     }
 
-    #_demandes_fichiers {
-        .code-wrapper {
-            code {
-                font-size: 28px;
-                line-height: normal;
-            }
-        }
-    }
-
-    #_ce_nest_que_le_début_de_lhistoire_3 {
-        img {
-            max-width: 100%;
-        }
-    }
-
-    #_dépôt_dune_demande {
-        .code-wrapper {
-            code {
-                font-size: 28px;
-                line-height: normal;
-            }
-        }
-    }
-
-    #_on_continue_le_parcours {
+    #_demande_de_complément_et_réponse {
         .code-wrapper {
             width: 100%;
             code {
@@ -172,6 +147,9 @@ body.title .reveal .slide-number {
     }
 
     #_action {
+        .content {
+            width: 100%;
+        }
         code {
             font-size: 20px;
             line-height: normal;
@@ -263,8 +241,5 @@ body.title .reveal .slide-number {
         grid-area: 1/1;
     }
 
-    #_périmètre_géographique .code-wrapper {
-        width: 100%;
-    }
 }
 
