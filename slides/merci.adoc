@@ -8,12 +8,12 @@ Slides
 image::images/qrcode-slides.svg[slides,300px]
 --
 
-// [.column]
-// --
-// Nicolas guérinet
-//
-// image::images/avatar.png[nico,200px]
-// --
+[.column]
+--
+Julien Vinber
+
+Benjamin Jaegger
+--
 
 [.column]
 --

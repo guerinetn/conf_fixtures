@@ -120,14 +120,20 @@ Candidate Service :
 
 === Périmètre Géographique
 
-[.r-stack]
---
-
-[.fade-out, step=1]
 image::images/carte-france-regions-departements.webp[carte,450px]
 
-[step=1]
-[source, php,%linenums,highlight="1..9|11..16"]
+[NOTE.speaker]
+====
+Données Géo : Régions / Département /Communes / EPCIS
+
+* Définition périmètre pour les demandes
+* Instructeurs périmètre d'instruction
+
+====
+
+=== Périmètre Géographique
+
+[source, php,%linenums,highlight="1..10|12..17"]
 ----
 class GeographicDataFixtures extends Fixture
 {
@@ -136,7 +142,8 @@ class GeographicDataFixtures extends Fixture
         private readonly ImportEpcisCommand $epcisCommand,
         private readonly ImportCommunesCommand $communesCommand,
     ){
-        $this->io = new SymfonyStyle(new ArrayInput([]), new ConsoleOutput());
+        $this->input = new ArrayInput([]);
+        $this->output = new ConsoleOutput();
     }
 
     public function load(ObjectManager $manager): void
@@ -147,19 +154,18 @@ class GeographicDataFixtures extends Fixture
     }
 }
 ----
---
 [NOTE.speaker]
 ====
-On a parlé de demande, et de périmètre d'une demande.
-Elles sont où les données géographiques ?
+* Récupération données géographiques
+* Injection Commandes
+* Imports Données géographiques
 
-Heureusement, nous avons une commande qui permet de créer des communes, des départements et des régions.
-
-On a donc un candidat, mais il nous faut également des instructeurs.
+Next Instructeurs et Dépendants fixtures
 ====
 
 === image:images/intro/doctrine-logo.svg[doctrine,120] DependentFixtureInterface
 
+[step=1]
 [source,php,highlight="1..4|6..8|1..7]
 ----
 class DemandeurFixture extends Fixture implements DependentFixtureInterface
@@ -425,19 +431,50 @@ $this->addReference('DEMANDE' , $demande);
 
 $this->addReference('DEMANDEUR' , $demandeur);
 
-$instructeur= $this->getReference('INSTRUCTEUR_' . $dpt->getCode(), $instructeur);
+$instructeur= $this->getReference('INSTRUCTEUR_' . $dpt->getCode(), Intervenant::class);
 
-$superviseur = $this->getReference('SUPERVISEUR_' . $region->getCode(), $superviseur);
+$superviseur = $this->getReference('SUPERVISEUR_' . $region->getCode(), Intervenant::class);
 
 $demande = $this->getReference('DEMANDE' , $demande);
 
 $demandeur = $this->getReference('DEMANDEUR' , $demandeur);
 ----
+
 [NOTE.speaker]
 ====
 
 * Stockage de la référence
 * récupération d'une référence
+====
+
+=== image:images/intro/doctrine-logo.svg[doctrine,120] Le registre
+
+[source,php,highlight="14|1..16"]
+----
+class IntervenantFixtures extends Fixture implements DependentFixtureInterface
+{
+     public function load(ObjectManager $manager): void
+    {
+        foreach ($this->departementRepository->findAll() as $departement) {
+            $instructeur = new Intervenant(
+                name: "Instructeur",
+                email: "instructeur_{$dpt->getCode()}@test",
+                roles: [Role::ROLE_INSTRUCTEUR->name],
+                perimetre: new PerimetreIntervention(dpts: [$dpt])
+            );
+            $this->intervenantService->create($instructeur);
+
+            $this->addReference('INSTRUCTEUR_' . $dpt->getCode(), $instructeur);
+        }
+    }
+}
+----
+
+[NOTE.speaker]
+====
+
+Stockage des références des intervenant.
+
 ====
 
 === Dépôt d'une demande

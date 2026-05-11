@@ -3,32 +3,35 @@
 
 [.column]
 --
+[step=1]
 image::images/intro/symfony_icon.svg[symfony,150px]
 --
 
 [.column]
 --
+[step=2]
 image::images/intro/keycloak_icon.svg[keycloak,150px]
 --
 
 [.column]
 --
+[step=3]
 image::images/intro/postgres_logo.png[postgres,150px]
 --
 
 [.column]
 --
+[step=4]
 image::images/intro/angular_icon.svg[angular,150px]
 --
 
 [NOTE.speaker]
 ====
 
-REX === contexte
-
-Le projet sur lequel nous travaillons est une application web composée de 3 briques.
-
-Backend / Frontend / Authentification / Persistance
+* Backend Symfony
+* Gestion : Identité Keycloak
+* Stockage : Postgres
+* Front : Angular
 
 ====
 
@@ -50,7 +53,8 @@ image::images/intro/instruction.png[instruction,350px]
 
 [NOTE.speaker]
 ====
-Plateforme de dépot de demande
+Plateforme de dépot de demande d'agrément.
+Un agrément, c’est une **autorisation officielle délivrée par une autorité compétente** qui atteste qu’une organisation, une activité ou un dispositif respecte un ensemble de critères et de règles précis, et l’autorise à exercer dans un cadre donné.
 
 * Constitution de dossier => beaucoup d'info à saisir
 * Périmètre géographique
@@ -63,7 +67,7 @@ Instruction de demande
 * recours ...
 ====
 
-=== Cycle de vie d'un dossier
+=== Cycle de vie d'un agrément
 
 image::images/intro/instrution2.png[instruction,40%]
 

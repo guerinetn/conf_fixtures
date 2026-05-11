@@ -66,7 +66,17 @@ body.title .reveal .slide-number {
         }
     }
 
+    #_et_pour_les_données {
+        .imageblock img {
+            margin-bottom: 0;
+        }
+        .paragraph p{
+            margin-top: 0;
+            font-size: 1.5rem;
+        }
+    }
     .code-wrapper {
+        width: 100%;
         code {
             max-height: unset;
 
@@ -80,13 +90,14 @@ body.title .reveal .slide-number {
         }
     }
 
-    #_périmètre_géographique .code-wrapper,
-    #_et_rejetons_cest_possible .code-wrapper,
-    #_passons_donc_aux_demandes_2 .code-wrapper,
-    #_dépôt_dune_demande .code-wrapper
-    {
-        width: 100%;
-    }
+    /*#_périmètre_géographique .code-wrapper,*/
+    /*#_et_rejetons_cest_possible .code-wrapper,*/
+    /*#_passons_donc_aux_demandes_2 .code-wrapper,*/
+    /*#_dépôt_dune_demande .code-wrapper,*/
+    /*#_le_registre .code-wrapper,*/
+    /*{*/
+    /*    width: 100%;*/
+    /*}*/
 
     #_fixtures, #_fixturebundle, #_fixturebundle_2, #_symfonyclock {
         .code-wrapper {
@@ -111,7 +122,9 @@ body.title .reveal .slide-number {
         }
     }
 
-    #_ce_nest_que_le_début_de_lhistoire {
+    #_ce_nest_que_le_début_de_lhistoire ,
+    #_symfonyclock_2,
+    #_décrivons_cette_histoire{
         .content {
             width: 100%;
         }
@@ -119,7 +132,6 @@ body.title .reveal .slide-number {
 
     #_demande_de_complément_et_réponse {
         .code-wrapper {
-            width: 100%;
             code {
                 font-size: 20px;
             }
@@ -175,7 +187,7 @@ body.title .reveal .slide-number {
         }
     }
 
-    #_un_film_on_en_fait_la_promo {
+    #_un_film_on_en_fait_la_pub {
         .content pre {
             font-size: 15px;
             line-height: normal;
@@ -204,10 +216,6 @@ body.title .reveal .slide-number {
         img {
             margin-top: 0;
         }
-    }
-
-    #_merci {
-        font-size: larger;
     }
 
     section.title h1 {

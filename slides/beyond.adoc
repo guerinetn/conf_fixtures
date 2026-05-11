@@ -6,57 +6,26 @@ Et oui, j'ai prévenu nous voulons être beyond.
 
 ====
 
-=== Et les mots de passes...
+=== Vers une histoire collaborative.
 
-[%step]
-
-**1A**john.doe@test
+image::images/scenrio_a_plusieurs.png[scenario,55%]
 
 [NOTE.speaker]
 ====
 
-Keycloak mail == mail il aime pas
+* Un cas à reproduire en prod
+* Du contexte pour les testeurs
+* Des scénarios pour les tests auto
+* Contexte = données prédictibles pain béni pour les tests.
 
-On a donc choisi 1A+mail
-====
+Comme on a fait une bonne promo tout le monde veut en faire.
 
-=== Une nouvelle action ?
-
-
-[NOTE.speaker]
-====
-
-Nous dispatch d'évenemment, rien à faire,
-
-Au pire il faut juste gérer l'aiguillage vers le service.
+Oui, c'est généré par IA il y a des pieds à la place des mains
+des gens très souples
 
 ====
 
-=== Ça ne fait pas le café, mais presque !
-
-[NOTE.speaker]
-====
-
-* ça Teste
-* Objets évolue
-* Context pour les tests
-* Contexte est partiellement testé.
-
-====
-
-
-=== On a perdu la recette
-
-[NOTE.speaker]
-====
-
-La base de données à été effacée
-6 mois de cas de tests perdus
-
-Ce n'est pas que pour la dev,
-====
-
-=== Un film, on en fait la promo.
+=== Un film, on en fait la pub.
 
 [cols="1,1,1,2,1,1,2"]
 |===
@@ -90,21 +59,52 @@ C'est de AsciiDoc et les informations ont les a dans les fichiers yaml
 
 ====
 
-=== Vers une histoire collaborative.
+=== Et les mots de passes...
 
-image::images/scenrio_a_plusieurs.png[scenario,55%]
+[%step]
+
+**1A**john.doe@test
 
 [NOTE.speaker]
 ====
 
-* Un cas à reproduire en prod
-* Du contexte pour les testeurs
-* Des scénarios pour les tests auto
-* Contexte = données prédictibles pain béni pour les tests.
+Keycloak mail == mail il aime pas
 
-Comme on a fait une bonne promo tout le monde veut en faire.
+On a donc choisi 1A+mail
+====
 
-Oui, c'est généré par IA il y a des pieds à la place des mains
-des gens très souples
+=== Une nouvelle action ?
+
+[NOTE.speaker]
+====
+
+Nous dispatch d'évenemment, rien à faire,
+
+Au pire il faut juste gérer l'aiguillage vers le service.
 
 ====
+
+=== Ça ne fait pas le café, mais presque !
+
+[NOTE.speaker]
+====
+
+* ça Teste
+* Objets évolue
+* Context pour les tests
+* Contexte est partiellement testé.
+
+====
+
+
+=== On a perdu la recette
+
+[NOTE.speaker]
+====
+
+La base de données a été effacée
+6 mois de cas de tests perdus
+
+Ce n'est pas que pour la dev,
+====
+

@@ -55,26 +55,39 @@ image::images/intro/doctrine-logo.svg[doctrine,100px]
 [.column]
 --
 [step=1]
+=====
 image::images/intro/task.png[task,300px]
+Readme.md
+=====
 --
 
 [.column]
 --
 [step=2]
+====
 image::images/intro/old_hdd.png[task,300px]
---
-
-[.column]
---
-[step=4]
-image::images/intro/404.png[404,600px]
+Vieux Dump
+====
 --
 
 [.column]
 --
 [step=3]
+====
 image::images/intro/dump_prod.png[dump,300px]
+prod Anonimysée
+====
 --
+
+[.column]
+--
+[step=4]
+====
+image::images/intro/404.png[404,600px]
+Rien ...
+====
+--
+
 
 [NOTE.speaker]
 ====

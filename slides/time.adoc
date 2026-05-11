@@ -13,17 +13,18 @@ Et s'il était possible de manipuler le temps avec Symfony ?
 
 === SymfonyClock
 
-[source, php,%numlines]
+[source, php,%numlines,highlight='1..2|4..5|7..9']
 ----
 use function Symfony\Component\Clock\now;
-$now = now();
-
-Clock::set(new MockClock("2024-01-01"));
-$now = now();               /* ==> à 2024-01-01 00:00:00 */
-$now = now('+10h');        /* ==> 2024-01-01 10:00:00 */
+$now = now();              /* ==> Maintenant */
 
 Clock::set(new NativeClock());
 $now = now();              /* ==> Maintenant */
+
+Clock::set(new MockClock("2024-01-01"));
+$now = now();              /* ==> 2024-01-01 00:00:00 */
+$now = now('+10h');        /* ==> 2024-01-01 10:00:00 */
+
 ----
 
 [NOTE.speaker]
@@ -33,6 +34,45 @@ On peut donc fixer le temps à une date précise. (MockClock) ou utiliser le tem
 
 Avec MockClock, on a tout ce qu'il nous faut pour rendre notre cas de test réaliste.
 ====
+
+=== SymfonyClock
+
+[.r-stack]
+--
+
+[.fade-out, step=1]
+[source, php,%numlines]
+----
+    $demande->dateDepot = new DateTime();
+
+    public function onPreUpdate(): void
+    {
+        $this->dateModification = new DateTime();
+    }
+
+    public function __construct()
+    {
+        $this->dateCreation = new DateTime();
+        ...
+    }
+----
+[step=1]
+[source, php,%numlines]
+----
+    $demande->dateDepot = now();
+
+    public function onPreUpdate(): void
+    {
+        $this->dateModification = now();
+    }
+
+    public function __construct()
+    {
+        $this->dateCreation = now();
+        ...
+    }
+----
+--
 
 === Figeons le temps
 [.r-stack]
@@ -48,7 +88,7 @@ Clock::set(new MockClock("2024-06-01"));
 $this->demandeService->affecterDemande(user: $superviseur, demande: $demande, instructeur: $instructeur);
 
 Clock::set(new MockClock("2024-06-08"));
-$this->demandeService->demanderComplément(user: $instructeur, demande: $demande, commentaire: 'Commentaire');
+$this->demandeService->demanderComplement(user: $instructeur, demande: $demande, commentaire: 'Commentaire');
 
 Clock::set(new MockClock("2024-06-16"));
 $this->demandeService->addPjsBrouillon($demande, "complement1.pdf", "complement");
@@ -93,7 +133,7 @@ Clock::set(new MockClock("2024-07-31"));
 $this->demandeService->demanderComplément(user: $instructeur, demande: $demande, commentaire: 'Commentaire');
 
 Clock::set(new MockClock("2024-09-01"));
-$this->demandeCommand->checkDelaiReponse();
+$this->checkDelaiCommand->execute($this->input, $this->output);
 
 Clock::set(new MockClock("2024-09-02"));
 $this->demandeService->refuserDemande(user: $instructeur, demande: $demande, commentaire: 'Hors délai');
