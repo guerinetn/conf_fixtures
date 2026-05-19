@@ -15,10 +15,10 @@
 
 [NOTE.speaker]
 ====
-Bonjour merci pour l'invitation…
+Bonjour, merci pour l'invitation.
 
-Aujourd'hui, je vais vous parler de fixtures mais aussi de scénarii et
-
+Aujourd'hui, je viens vous parler de fixtures — et surtout de ce qu'elles deviennent quand on les pense comme des scénarios.
+REX d'un vrai projet, exemples à l'appui, et de quoi repartir avec une recette à essayer chez vous dès lundi.
 ====
 
 include::intro.adoc[]

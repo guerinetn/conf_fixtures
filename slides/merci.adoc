@@ -12,7 +12,7 @@ image::images/qrcode-slides.svg[slides,300px]
 --
 Julien Vinber
 
-Benjamin Jaegger
+Benjamin Jaeger
 --
 
 [.column]

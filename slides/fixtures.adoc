@@ -64,7 +64,7 @@ class DemandeurFixture extends Fixture
 
         $manager->persist($demandeur);
         $manager->flush();
- }
+    }
 }
 ----
 

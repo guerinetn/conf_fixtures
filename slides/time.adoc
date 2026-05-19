@@ -156,13 +156,13 @@ $this->demandeService->refuserDemande(user: $instructeur, demande: $demande, com
 --
 Données géographiques
 
-Intervenant
+Intervenants
 --
 
 [%step]
 [.column]
 --
-Demandeur
+Demandeurs
 
 Fichiers
 
@@ -179,7 +179,7 @@ Le temps
 [NOTE.speaker]
 ====
 Nous avons pu alimenter les données de base (géographique notamment).
-Créer nos intervenants (instruteur, superviseur et admin).
+Créer nos intervenants (instructeur, superviseur et admin).
 
 On a un cas de test réaliste avec des utilisateurs qui peuvent se connecter (Demandeur, instructeur, superviseur).
 Nous avons des fichiers que les utilsateurs peuvent consulter et donc vérifier leur présence.
