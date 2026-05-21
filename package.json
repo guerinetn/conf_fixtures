@@ -6,7 +6,7 @@
     "npm-watch": "^0.13.0"
   },
   "scripts": {
-    "build": "npx asciidoctor-revealjs slides/index.adoc",
+    "build": "npm ci && npx asciidoctor-revealjs slides/index.adoc",
     "build:ci": "npm run build && mkdir -p dist && cp slides/index.html dist/ && cp -r slides/css dist/ && cp -r slides/images dist/ && cp -r slides/highlight dist/ && mkdir -p dist/node_modules && cp -r node_modules/reveal.js dist/node_modules/reveal.js",
     "start": "npm run start:container && npm run watch",
     "start:container": "docker compose up -d",

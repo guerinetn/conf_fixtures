@@ -3,9 +3,9 @@
 
 [.column]
 --
-Slides
 
-image::images/qrcode-slides.svg[slides,300px]
+image::images/qr_codes/slides.svg[slides,300px]
+Slides
 --
 
 [.column]
@@ -18,7 +18,6 @@ Benjamin Jaeger
 [.column]
 --
 
+image::images/qr_codes/openfeedback_afup_days_2026.svg[openfeedback,300px]
 Feedback
-
-// image::images/qrcode_openfeedback_so_days.svg[openfeedback,300px]
 --

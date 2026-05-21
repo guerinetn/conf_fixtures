@@ -1,3 +1,6 @@
+FROM nginx:1.27-alpine3.21 AS dev
+WORKDIR /app
+
 FROM node:18.20-alpine3.20 AS build
 WORKDIR /app
 COPY package.json package-lock.json ./

@@ -248,6 +248,11 @@ body.title .reveal .slide-number {
     .r-stack > .content > * {
         grid-area: 1/1;
     }
+    #_en_bref {
+        .slide-content{
+            text-align: left;
+        }
+    }
 
 }
 

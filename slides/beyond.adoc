@@ -8,7 +8,7 @@ Et oui, j'ai prévenu nous voulons être beyond.
 
 === Vers une histoire collaborative.
 
-image::images/scenrio_a_plusieurs.png[scenario,55%]
+image::images/beyond/scenrio_a_plusieurs.png[scenario,55%]
 
 [NOTE.speaker]
 ====
@@ -75,6 +75,24 @@ On a donc choisi 1A+mail
 
 === Une nouvelle action ?
 
+[%step]
+--
+[source,php,%numlines,highlight="9"]
+----
+public function parcoursAction(array $demandeConfig, Demande $demande): void
+{
+    foreach ($demandeConfig['actions'] as $action) {
+        $user = $this->getReference($action['user'], User::class);
+        match ($action['action']) {
+            'depose' => $this->demandeService->depose($user, $demande),
+            'affecte' => $this->demandeService->affecte($user, $demande, $action['payload']),
+            'complete' => $this->demandeService->complete($user, $demande),
+            'nouvelle_action' => $this->monService->monAction(...)
+        };
+    }
+}
+----
+--
 [NOTE.speaker]
 ====
 
@@ -89,10 +107,8 @@ Au pire il faut juste gérer l'aiguillage vers le service.
 [NOTE.speaker]
 ====
 
-* ça Teste
-* Objets évolue
-* Context pour les tests
-* Contexte est partiellement testé.
+* Du contexte testé en entrée des tests
+* Reproduction d'un cas de prod
 
 ====
 
@@ -108,3 +124,27 @@ La base de données a été effacée
 Ce n'est pas que pour la dev,
 ====
 
+=== En bref
+
+[%step]
+* Il faut en avoir besoin
+
+[%step]
+* Commencer pas à pas
+
+[%step]
+* Pas que pour les devs
+
+[%step]
+* Ce n’est pas qu'une ligne en base : c’est une situation métier.
+
+[NOTE.speaker]
+====
+
+* Pas pour tout le monde. Si pas de workflow, useless
+* Pas de mécanisme de fixtures aujourd'hui ne ferme aucune porte demain : on peut scénariser sur un projet existant, sans tout réécrire.
+* Une fois les scénarios en place, votre QA, vos PO et vos devs vous diront merci.
+* Une fixture, ce n'est pas une ligne en base : c'est une situation métier.
+
+
+====

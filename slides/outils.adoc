@@ -1,7 +1,7 @@
 [%notitle]
 == Outillons-nous
 
-image::images/home-erectus.png[100%]
+image::images/outils/home-erectus.png[100%]
 [NOTE.speaker]
 ====
 
@@ -219,7 +219,7 @@ $this->demandeFixturesService->completeDemande($demande);
 --
 
 [.fade-out, step=1]
-image::images/workflow_mar_start.svg[workflow,100%]
+image::images/fixtures/workflow_start.svg[workflow,100%]
 
 [step=1]
 [source.yaml,%numlines,highlight="1|2..5|6..11|13..17|19..27"]
@@ -328,7 +328,7 @@ date_creation: "<a_modifier>"
 [%notitle]
 === Gestion scénario
 
-image::images/process_final.svg[process_final,85%]
+image::images/outils/process_final.svg[process_final,85%]
 
 [NOTE.speaker]
 ====

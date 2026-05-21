@@ -10,31 +10,37 @@ image::images/intro/readme.png[readme,100px]
 [step=1]
 [.column]
 --
-image::images/intro/git.png[git,100px]
+image::images/logos/git.png[git,100px]
 --
 
 [step=2]
 [.column]
 --
-image::images/intro/npm.png[npm,100px]
+image::images/logos/npm.png[npm,100px]
 --
 
 [step=2]
 [.column]
 --
-image::images/intro/logo-composer-transparent.png[composer,100px]
+image::images/logos/composer.png[composer,100px]
+--
+
+[step=2]
+[.column]
+--
+image::images/logos/docker.svg[npm,100px]
 --
 
 [step=3]
 [.column]
 --
-image::images/intro/docker-compose.png[docker,100px]
+image::images/logos/compose.png[docker,100px]
 --
 
 [step=3]
 [.column]
 --
-image::images/intro/doctrine-logo.svg[doctrine,100px]
+image::images/logos/doctrine.svg[doctrine,100px]
 --
 
 

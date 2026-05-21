@@ -3,7 +3,7 @@
 
 [.column]
 --
-image::images/avatar.jpg[nico,70%]
+image::images/moi/avatar.jpg[nico,70%]
 --
 
 [.column.has-text-left]
@@ -17,7 +17,7 @@ TechLead, Architecte
 
 [.column]
 --
-image::images/gop-mini.png[gop,80px,float="left"]
+image::images/logos/gop-mini.png[gop,80px,float="left"]
 onepoint BDX
 --
 
@@ -27,10 +27,9 @@ onepoint BDX
 
 Je suis lead développeur backend, spécialisé en PHP avec Symfony et Drupal.
 
-Selon les besoins des projets, j’alterne entre un rôle d’architecte technique et un rôle de lead dev, au plus près de l’équipe, pour cadrer les choix d’implémentation, garantir la qualité du code et assurer la livraison des fonctionnalités en production.
-
-
 onepoint, c’est un cabinet de conseil et de tech qui accompagne les organisations de la stratégie jusqu’au code en prod.
+
+4000 dont ~300 à bordeaux
 
 On travaille avec les équipes de dev sur l’architecture (cloud, data, API), le delivery agile, la CI/CD et les pratiques DevOps, en co‑construisant les solutions et en restant très proches du terrain et du code.
 

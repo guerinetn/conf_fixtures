@@ -15,10 +15,11 @@
 
 [NOTE.speaker]
 ====
-Bonjour, merci pour l'invitation.
+Bonjour,... Aujourd'hui, je viens vous parler de fixtures — et surtout de ce qu'elles deviennent quand on les pense comme des scénarios.
 
-Aujourd'hui, je viens vous parler de fixtures — et surtout de ce qu'elles deviennent quand on les pense comme des scénarios.
 REX d'un vrai projet, exemples à l'appui, et de quoi repartir avec une recette à essayer chez vous dès lundi.
+
+Qui dit REX dit projet, et quand on commence un projet.
 ====
 
 include::intro.adoc[]
@@ -34,7 +35,5 @@ include::time.adoc[]
 include::outils.adoc[]
 
 include::beyond.adoc[]
-
-include::conclusion.adoc[]
 
 include::merci.adoc[]

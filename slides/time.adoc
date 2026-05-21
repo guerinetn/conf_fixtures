@@ -1,7 +1,7 @@
 [%notitle]
 == Il est temps de voyager
 
-image::images/delorean3.png[delorean]
+image::images/time/delorean.png[delorean]
 
 Et s'il était possible de manipuler le temps avec Symfony ?
 
@@ -79,7 +79,7 @@ Avec MockClock, on a tout ce qu'il nous faut pour rendre notre cas de test réal
 --
 
 [.fade-out, step=1]
-image::images/workflow_mar_start_depose.png[workflow,100%]
+image::images/fixtures/workflow_start_depose.png[workflow,100%]
 
 [step=1]
 [source,php,%linenums,highlight="1..2|1,4,7,10,13|1..14"]
@@ -121,7 +121,7 @@ Réaliste
 --
 
 [.fade-out, step=1]
-image::images/workflow_rejet.png[workflow,100%]
+image::images/fixtures/workflow_rejet.png[workflow,100%]
 
 [step=1]
 [source,php,%linenums,highlight="1..5|7..8|10,11|1..11"]

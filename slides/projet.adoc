@@ -4,25 +4,25 @@
 [.column]
 --
 [step=1]
-image::images/intro/symfony_icon.svg[symfony,150px]
+image::images/projet/symfony.svg[symfony,150px]
 --
 
 [.column]
 --
 [step=2]
-image::images/intro/keycloak_icon.svg[keycloak,150px]
+image::images/projet/keycloak.svg[keycloak,150px]
 --
 
 [.column]
 --
 [step=3]
-image::images/intro/postgres_logo.png[postgres,150px]
+image::images/projet/postgres.png[postgres,150px]
 --
 
 [.column]
 --
 [step=4]
-image::images/intro/angular_icon.svg[angular,150px]
+image::images/projet/angular.svg[angular,150px]
 --
 
 [NOTE.speaker]
@@ -40,7 +40,7 @@ image::images/intro/angular_icon.svg[angular,150px]
 
 [.column]
 --
-image::images/intro/depot.svg[depot,350px]
+image::images/projet/depot.svg[depot,350px]
 
 [.credit]
 _Illustration : https://storyset.com[Storyset]_
@@ -48,7 +48,7 @@ _Illustration : https://storyset.com[Storyset]_
 
 [.column]
 --
-image::images/intro/instruction.png[instruction,350px]
+image::images/projet/instruction.png[instruction,350px]
 --
 
 [NOTE.speaker]
@@ -62,14 +62,14 @@ Un agrément, c’est une **autorisation officielle délivrée par une autorité
 
 Instruction de demande
 
-* analyse des dossiers
+* Analyse des dossiers
 * Décision sur les dossiers
 * recours ...
 ====
 
 === Cycle de vie d'un agrément
 
-image::images/intro/instrution2.png[instruction,40%]
+image::images/projet/instrution2.png[instruction,40%]
 
 [NOTE.speaker]
 ====
@@ -78,14 +78,14 @@ image::images/intro/instrution2.png[instruction,40%]
 * Suivi des agréments
 * Gestion de la fraude
 
-*Pour l'exemple on ne va parler que des demandes*
+*Pour l'exemple, on ne va parler que des demandes*
 
 ====
 
 [%notitle]
 === Contexte
 
-image::images/workflow_mar_complet.png[workflow,30%]
+image::images/projet/workflow_complet_vierge.png[workflow,30%]
 
 [NOTE.speaker]
 ====
